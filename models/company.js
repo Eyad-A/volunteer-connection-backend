@@ -9,34 +9,38 @@ const { sqlForPartialUpdate } = require("../helpers/sql");
 class Company {
   /** Create a company (from data), update db, return new company data.
    *
-   * data should be { handle, name, description, numEmployees, logoUrl }
+   * data should be { company_name, country, num_employees, short_description, long_description, website_url, logoUrl, main_image_url, looking_for }
    *
-   * Returns { handle, name, description, numEmployees, logoUrl }
+   * Returns { company_name, country, num_employees, short_description, long_description, website_url, logoUrl, main_image_url, looking_for }
    *
    * Throws BadRequestError if company already in database.
    * */
 
-  static async create({ handle, name, description, numEmployees, logoUrl }) {
+  static async create({ company_name, country, num_employees, short_description, long_description, website_url, logoUrl, main_image_url, looking_for }) {
     const duplicateCheck = await db.query(
-          `SELECT handle
+          `SELECT company_name
            FROM companies
-           WHERE handle = $1`,
-        [handle]);
+           WHERE company_name = $1`,
+        [company_name]);
 
     if (duplicateCheck.rows[0])
-      throw new BadRequestError(`Duplicate company: ${handle}`);
+      throw new BadRequestError(`Duplicate company: ${company_name}`);
 
     const result = await db.query(
           `INSERT INTO companies
-           (handle, name, description, num_employees, logo_url)
-           VALUES ($1, $2, $3, $4, $5)
-           RETURNING handle, name, description, num_employees AS "numEmployees", logo_url AS "logoUrl"`,
+           (company_name, country, num_employees, short_description, long_description, website_url, logoUrl, main_image_url, looking_for)
+           VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+           company_name, country, num_employees AS "numEmployees", short_description, long_description, website_url, logoUrl AS "logoUrl, main_image_url, looking_for`,
         [
-          handle,
-          name,
-          description,
-          numEmployees,
-          logoUrl,
+          company_name, 
+          country, 
+          numEmployees, 
+          short_description, 
+          long_description, 
+          website_url, 
+          logoUrl, 
+          main_image_url, 
+          looking_for,
         ],
     );
     const company = result.rows[0];
@@ -44,20 +48,22 @@ class Company {
     return company;
   }
 
-  /** Find all companies.
-   *
-   * Returns [{ handle, name, description, numEmployees, logoUrl }, ...]
+  /** Find all companies.   
    * */
 
   static async findAll() {
     const companiesRes = await db.query(
-          `SELECT handle,
-                  name,
-                  description,
-                  num_employees AS "numEmployees",
-                  logo_url AS "logoUrl"
-           FROM companies
-           ORDER BY name`);
+          `SELECT company_name, 
+            country, 
+            num_employees AS "numEmployees", 
+            short_description, 
+            long_description, 
+            website_url, 
+            logo_url AS "logoUrl, 
+            main_image_url, 
+            looking_for
+          FROM companies
+          ORDER BY name`);
     return companiesRes.rows;
   }
 
@@ -69,21 +75,35 @@ class Company {
    * Throws NotFoundError if not found.
    **/
 
-  static async get(handle) {
+  static async get(company_id) {
     const companyRes = await db.query(
-          `SELECT handle,
-                  name,
-                  description,
-                  num_employees AS "numEmployees",
-                  logo_url AS "logoUrl"
+          `SELECT company_name, 
+            country, 
+            num_employees AS "numEmployees", 
+            short_description, 
+            long_description, 
+            website_url, 
+            logo_url AS "logoUrl", 
+            main_image_url, 
+            looking_for
            FROM companies
-           WHERE handle = $1`,
-        [handle]);
+           WHERE company_id = $1`,
+        [company_id]);
 
     const company = companyRes.rows[0];
 
-    if (!company) throw new NotFoundError(`No company: ${handle}`);
+    if (!company) throw new NotFoundError(`No company: ${company_id}`);
 
+    const connectionRes = await db.query(
+      `SELECT username 
+        FROM connections
+        WHERE company_id = $1
+        ORDER BY username`,
+      [company_id],
+    );
+
+    company.users = connectionRes.rows;
+    
     return company;
   }
 
@@ -92,31 +112,34 @@ class Company {
    * This is a "partial update" --- it's fine if data doesn't contain all the
    * fields; this only changes provided ones.
    *
-   * Data can include: {name, description, numEmployees, logoUrl}
-   *
-   * Returns {handle, name, description, numEmployees, logoUrl}
+   * Data can include: {company_name, country, num_employees, short_description, long_description, website_url, logoUrl, main_image_url, looking_for}
    *
    * Throws NotFoundError if not found.
    */
 
-  static async update(handle, data) {
+  static async update(company_id, data) {
     const { setCols, values } = sqlForPartialUpdate(
         data,
         {
           numEmployees: "num_employees",
           logoUrl: "logo_url",
         });
-    const handleVarIdx = "$" + (values.length + 1);
+    const companyIdVarIdx = "$" + (values.length + 1);
 
     const querySql = `UPDATE companies 
                       SET ${setCols} 
-                      WHERE handle = ${handleVarIdx} 
-                      RETURNING handle, 
-                                name, 
-                                description, 
+                      WHERE company_id = ${companyIdVarIdx}
+                      RETURNING company_id, 
+                                company_name, 
+                                country,
                                 num_employees AS "numEmployees", 
-                                logo_url AS "logoUrl"`;
-    const result = await db.query(querySql, [...values, handle]);
+                                short_description,
+                                long_description,
+                                website_url,
+                                logo_url AS "logoUrl",
+                                main_image_url,
+                                looking_for`;
+    const result = await db.query(querySql, [...values, company_id]);
     const company = result.rows[0];
 
     if (!company) throw new NotFoundError(`No company: ${handle}`);
@@ -129,13 +152,13 @@ class Company {
    * Throws NotFoundError if company not found.
    **/
 
-  static async remove(handle) {
+  static async remove(company_id) {
     const result = await db.query(
           `DELETE
            FROM companies
-           WHERE handle = $1
-           RETURNING handle`,
-        [handle]);
+           WHERE company_id = $1
+           RETURNING company_name`,
+        [company_id]);
     const company = result.rows[0];
 
     if (!company) throw new NotFoundError(`No company: ${handle}`);

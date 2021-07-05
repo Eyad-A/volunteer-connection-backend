@@ -10,24 +10,29 @@ async function commonBeforeAll() {
   await db.query("DELETE FROM users");
 
   await db.query(`
-    INSERT INTO companies(handle, name, num_employees, description, logo_url)
-    VALUES ('c1', 'C1', 1, 'Desc1', 'http://c1.img'),
-           ('c2', 'C2', 2, 'Desc2', 'http://c2.img'),
-           ('c3', 'C3', 3, 'Desc3', 'http://c3.img')`);
+    INSERT INTO companies(company_name, country, num_employees, short_description, long_description, website_url, logo_url, main_image_url, looking_for)
+    VALUES ('Apple', 'USA', 600, 'Creators of the iPhone', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec convallis, ex nec hendrerit lacinia, augue arcu pharetra odio, pharetra semper tortor erat non urna.', 'https://apple.com', 'https://c1.img', 'https://c1-main.img', 'Web Developer'),
+           ('Google', 'Germany', 800, 'Creators of Android', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec convallis, ex nec hendrerit lacinia, augue arcu pharetra odio, pharetra semper tortor erat non urna.', 'https://google.com', 'https://c2.img', 'https://c2-main.img', 'Graphic Designer'),
+           ('Microsoft', 'Japan', 500, 'Creators of Windows', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec convallis, ex nec hendrerit lacinia, augue arcu pharetra odio, pharetra semper tortor erat non urna.', 'https://microsoft.com', 'https://c3.img', 'https://c3-main.img', 'Analyst')`);
 
   await db.query(`
         INSERT INTO users(username,
                           password,
                           first_name,
                           last_name,
-                          email)
-        VALUES ('u1', $1, 'U1F', 'U1L', 'u1@email.com'),
-               ('u2', $2, 'U2F', 'U2L', 'u2@email.com')
+                          email,
+                          skill)
+        VALUES ('u1', $1, 'U1F', 'U1L', 'u1@email.com', 'Web Developer'),
+               ('u2', $2, 'U2F', 'U2L', 'u2@email.com', 'Graphic Designer')
         RETURNING username`,
       [
         await bcrypt.hash("password1", BCRYPT_WORK_FACTOR),
         await bcrypt.hash("password2", BCRYPT_WORK_FACTOR),
       ]);
+
+  await db.query(`
+  INSERT INTO connections(username, company_id)
+  VALUES ('u1', 1)`)
 }
 
 async function commonBeforeEach() {

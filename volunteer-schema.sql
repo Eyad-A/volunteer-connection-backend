@@ -1,5 +1,5 @@
 CREATE TABLE companies (
-  company_id SERIAL PRIMARY KEY,
+  company_id SERIAL UNIQUE PRIMARY KEY,
   company_name TEXT NOT NULL,
   country TEXT NOT NULL,
   num_employees INTEGER CHECK (num_employees > 0),
@@ -8,7 +8,7 @@ CREATE TABLE companies (
   website_url TEXT NOT NULL,
   logo_url TEXT,
   main_image_url TEXT,
-  looking_for TEXT,
+  looking_for TEXT NOT NULL,
 );
 
 CREATE TABLE users (
