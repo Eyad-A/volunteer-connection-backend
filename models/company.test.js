@@ -19,69 +19,90 @@ afterAll(commonAfterAll);
 
 describe("create", function () {
   const newCompany = {
-    handle: "new",
-    name: "New",
-    description: "New Description",
-    numEmployees: 1,
-    logoUrl: "http://new.img",
+    company_name: "My new company",
+    country: "USA",
+    numEmployees: 500,
+    short_description: "Great company",
+    long_description: "Really great company",
+    website_url: "https://google.com",
+    logoUrl: "https://new.img",
+    main_image_url: "https://main.img",
+    looking_for: "Web Developer",
   };
 
-  test("works", async function () {
+  test("Can create a new company", async function () {
     let company = await Company.create(newCompany);
     expect(company).toEqual(newCompany);
 
     const result = await db.query(
-          `SELECT handle, name, description, num_employees, logo_url
+      // company_name, country, num_employees, short_description, long_description, website_url, logoUrl, main_image_url, looking_for  // 
+      `SELECT company_id, 
+            company_name, 
+            country, 
+            num_employees, 
+            short_description, 
+            long_description, 
+            website_url, 
+            logoUrl, 
+            main_image_url, 
+            looking_for
            FROM companies
-           WHERE handle = 'new'`);
+           WHERE company_name = 'My new company'`);
     expect(result.rows).toEqual([
       {
-        handle: "new",
-        name: "New",
-        description: "New Description",
-        num_employees: 1,
-        logo_url: "http://new.img",
+        company_name: "My new company",
+        country: "USA",
+        numEmployees: 500,
+        short_description: "Great company",
+        long_description: "Really great company",
+        website_url: "https://google.com",
+        logoUrl: "https://new.img",
+        main_image_url: "https://main.img",
+        looking_for: "Web Developer",
       },
     ]);
-  });
-
-  test("bad request with dupe", async function () {
-    try {
-      await Company.create(newCompany);
-      await Company.create(newCompany);
-      fail();
-    } catch (err) {
-      expect(err instanceof BadRequestError).toBeTruthy();
-    }
   });
 });
 
 /************************************** findAll */
 
 describe("findAll", function () {
-  test("works: no filter", async function () {
+  test("Find all companies works", async function () {
     let companies = await Company.findAll();
     expect(companies).toEqual([
       {
-        handle: "c1",
-        name: "C1",
-        description: "Desc1",
-        numEmployees: 1,
+        company_name: "Apple",
+        country: "USA",
+        numEmployees: 600,
+        short_description: "Creators of the iPhone",
+        long_description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec convallis, ex nec hendrerit lacinia, augue arcu pharetra odio, pharetra semper tortor erat non urna.",
+        website_url: "https://apple.com",
         logoUrl: "http://c1.img",
+        main_image_url: "https://c1-main.img",
+        looking_for: "Web Developer",
       },
       {
-        handle: "c2",
-        name: "C2",
-        description: "Desc2",
-        numEmployees: 2,
+        company_name: "Google",
+        country: "Germany",
+        numEmployees: 800,
+        short_description: "Creators of Android",
+        long_description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec convallis, ex nec hendrerit lacinia, augue arcu pharetra odio, pharetra semper tortor erat non urna.",
+        website_url: "https://google.com",
         logoUrl: "http://c2.img",
+        main_image_url: "https://c2-main.img",
+        looking_for: "Graphic Designer",
       },
       {
-        handle: "c3",
-        name: "C3",
-        description: "Desc3",
-        numEmployees: 3,
+        //'Microsoft', 'Japan', 500, 'Creators of Windows', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec convallis, ex nec hendrerit lacinia, augue arcu pharetra odio, pharetra semper tortor erat non urna.', 'https://microsoft.com', 'https://c3.img', 'https://c3-main.img', 'Analyst'
+        company_name: "Microsoft",
+        country: "Japan",
+        numEmployees: 500,
+        short_description: "Creators of Windows",
+        long_description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec convallis, ex nec hendrerit lacinia, augue arcu pharetra odio, pharetra semper tortor erat non urna.",
+        website_url: "https://microsoft.com",
         logoUrl: "http://c3.img",
+        main_image_url: "https://c3-main.img",
+        looking_for: "Analyst",
       },
     ]);
   });
@@ -90,20 +111,24 @@ describe("findAll", function () {
 /************************************** get */
 
 describe("get", function () {
-  test("works", async function () {
-    let company = await Company.get("c1");
+  test("Can get a company by ID", async function () {
+    let company = await Company.get(1);
     expect(company).toEqual({
-      handle: "c1",
-      name: "C1",
-      description: "Desc1",
-      numEmployees: 1,
+      company_name: "Apple",
+      country: "USA",
+      numEmployees: 600,
+      short_description: "Creators of the iPhone",
+      long_description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec convallis, ex nec hendrerit lacinia, augue arcu pharetra odio, pharetra semper tortor erat non urna.",
+      website_url: "https://apple.com",
       logoUrl: "http://c1.img",
+      main_image_url: "https://c1-main.img",
+      looking_for: "Web Developer",
     });
   });
 
   test("not found if no such company", async function () {
     try {
-      await Company.get("nope");
+      await Company.get(96585);
       fail();
     } catch (err) {
       expect(err instanceof NotFoundError).toBeTruthy();
@@ -115,94 +140,48 @@ describe("get", function () {
 
 describe("update", function () {
   const updateData = {
-    name: "New",
-    description: "New Description",
-    numEmployees: 10,
-    logoUrl: "http://new.img",
+    company_name: "New name",
+    country: "Italy",
+    numEmployees: 500,
+    short_description: "Creators of the iPhone",
+    long_description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec convallis, ex nec hendrerit lacinia, augue arcu pharetra odio, pharetra semper tortor erat non urna.",
+    website_url: "https://apple.com",
+    logoUrl: "http://c1.img",
+    main_image_url: "https://c1-main.img",
+    looking_for: "Web Developer",
   };
 
-  test("works", async function () {
-    let company = await Company.update("c1", updateData);
+  test("Able to update company info", async function () {
+    let company = await Company.update(1, updateData);
     expect(company).toEqual({
-      handle: "c1",
+      company_id: "c1",
       ...updateData,
     });
 
     const result = await db.query(
-          `SELECT handle, name, description, num_employees, logo_url
+      `SELECT company_name, country, num_employees, short_description, long_description, website_url, logo_url, main_image_url, looking_for
            FROM companies
-           WHERE handle = 'c1'`);
+           WHERE company_id = 1`);
     expect(result.rows).toEqual([{
-      handle: "c1",
-      name: "New",
-      description: "New Description",
-      num_employees: 10,
-      logo_url: "http://new.img",
+      company_id: 1,
+      company_name: "New name",
+      country: "Italy",
+      numEmployees: 500,
+      short_description: "Creators of the iPhone",
+      long_description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec convallis, ex nec hendrerit lacinia, augue arcu pharetra odio, pharetra semper tortor erat non urna.",
+      website_url: "https://apple.com",
+      logoUrl: "http://c1.img",
+      main_image_url: "https://c1-main.img",
+      looking_for: "Web Developer",
     }]);
-  });
-
-  test("works: null fields", async function () {
-    const updateDataSetNulls = {
-      name: "New",
-      description: "New Description",
-      numEmployees: null,
-      logoUrl: null,
-    };
-
-    let company = await Company.update("c1", updateDataSetNulls);
-    expect(company).toEqual({
-      handle: "c1",
-      ...updateDataSetNulls,
-    });
-
-    const result = await db.query(
-          `SELECT handle, name, description, num_employees, logo_url
-           FROM companies
-           WHERE handle = 'c1'`);
-    expect(result.rows).toEqual([{
-      handle: "c1",
-      name: "New",
-      description: "New Description",
-      num_employees: null,
-      logo_url: null,
-    }]);
-  });
+  });  
 
   test("not found if no such company", async function () {
     try {
-      await Company.update("nope", updateData);
+      await Company.update(89874, updateData);
       fail();
     } catch (err) {
       expect(err instanceof NotFoundError).toBeTruthy();
     }
-  });
-
-  test("bad request with no data", async function () {
-    try {
-      await Company.update("c1", {});
-      fail();
-    } catch (err) {
-      expect(err instanceof BadRequestError).toBeTruthy();
-    }
-  });
-});
-
-/************************************** remove */
-
-describe("remove", function () {
-  test("works", async function () {
-    await Company.remove("c1");
-    const res = await db.query(
-        "SELECT handle FROM companies WHERE handle='c1'");
-    expect(res.rows.length).toEqual(0);
-  });
-
-  test("not found if no such company", async function () {
-    try {
-      await Company.remove("nope");
-      fail();
-    } catch (err) {
-      expect(err instanceof NotFoundError).toBeTruthy();
-    }
-  });
+  });  
 });

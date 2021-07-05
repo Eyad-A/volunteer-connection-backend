@@ -67,7 +67,7 @@ class Company {
     return companiesRes.rows;
   }
 
-  /** Given a company handle, return data about company.
+  /** Given a company id, return data about company.
    *
    * Returns { handle, name, description, numEmployees, logoUrl, jobs }
    *   where jobs is [{ id, title, salary, equity, companyHandle }, ...]
