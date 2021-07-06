@@ -16,7 +16,7 @@ class Company {
    * Throws BadRequestError if company already in database.
    * */
 
-  static async create({ company_name, country, num_employees, short_description, long_description, website_url, logoUrl, main_image_url, looking_for }) {
+  static async create({ company_name, country, numEmployees, short_description, long_description, website_url, logoUrl, main_image_url, looking_for }) {
     const duplicateCheck = await db.query(
           `SELECT company_name
            FROM companies

@@ -24,7 +24,7 @@ const router = new express.Router();
  * Authorization required: login
  */
 
-router.post("/", ensureLoggedIn, async function (req, res, next) {
+router.post("/", async function (req, res, next) {
   try {
     const validator = jsonschema.validate(req.body, companyNewSchema);
     if (!validator.valid) {
@@ -40,12 +40,7 @@ router.post("/", ensureLoggedIn, async function (req, res, next) {
 });
 
 /** GET /  =>
- *   { companies: [ { handle, name, description, numEmployees, logoUrl }, ...] }
- *
- * Can filter on provided search filters:
- * - minEmployees
- * - maxEmployees
- * - nameLike (will find case-insensitive, partial matches)
+ *   { companies: [ { company_name, country, num_employees, short_description, long_description, website_url, logoUrl, main_image_url, looking_for }, ...] }
  *
  * Authorization required: none
  */
@@ -59,17 +54,16 @@ router.get("/", async function (req, res, next) {
   }
 });
 
-/** GET /[handle]  =>  { company }
+/** GET /[company_id]  =>  { company }
  *
- *  Company is { handle, name, description, numEmployees, logoUrl, jobs }
- *   where jobs is [{ id, title, salary, equity }, ...]
+ *  Company is { company_name, country, num_employees, short_description, long_description, website_url, logoUrl, main_image_url, looking_for } 
  *
  * Authorization required: none
  */
 
-router.get("/:handle", async function (req, res, next) {
+router.get("/:company_id", async function (req, res, next) {
   try {
-    const company = await Company.get(req.params.handle);
+    const company = await Company.get(req.params.company_id);
     return res.json({ company });
   } catch (err) {
     return next(err);
@@ -80,14 +74,12 @@ router.get("/:handle", async function (req, res, next) {
  *
  * Patches company data.
  *
- * fields can be: { name, description, numEmployees, logo_url }
- *
- * Returns { handle, name, description, numEmployees, logo_url }
+ * fields can be: { company_name, country, num_employees, short_description, long_description, website_url, logoUrl, main_image_url, looking_for }  
  *
  * Authorization required: login
  */
 
-router.patch("/:handle", ensureLoggedIn, async function (req, res, next) {
+router.patch("/:company_id", ensureLoggedIn, async function (req, res, next) {
   try {
     const validator = jsonschema.validate(req.body, companyUpdateSchema);
     if (!validator.valid) {
@@ -95,7 +87,7 @@ router.patch("/:handle", ensureLoggedIn, async function (req, res, next) {
       throw new BadRequestError(errs);
     }
 
-    const company = await Company.update(req.params.handle, req.body);
+    const company = await Company.update(req.params.company_id, req.body);
     return res.json({ company });
   } catch (err) {
     return next(err);
@@ -107,14 +99,14 @@ router.patch("/:handle", ensureLoggedIn, async function (req, res, next) {
  * Authorization: login
  */
 
-router.delete("/:handle", ensureLoggedIn, async function (req, res, next) {
-  try {
-    await Company.remove(req.params.handle);
-    return res.json({ deleted: req.params.handle });
-  } catch (err) {
-    return next(err);
-  }
-});
+// router.delete("/:handle", ensureLoggedIn, async function (req, res, next) {
+//   try {
+//     await Company.remove(req.params.handle);
+//     return res.json({ deleted: req.params.handle });
+//   } catch (err) {
+//     return next(err);
+//   }
+// });
 
 
 module.exports = router;

@@ -12,28 +12,41 @@ async function commonBeforeAll() {
   await db.query("DELETE FROM companies");
 
   await Company.create(
-      {
-        handle: "c1",
-        name: "C1",
-        numEmployees: 1,
-        description: "Desc1",
-        logoUrl: "http://c1.img",
+    //company_name, country, num_employees, short_description, long_description, website_url, logo_url, main_image_url, looking_for
+      {        
+        company_name: "C1",
+        country: "USA",
+        numEmployees: 200,
+        short_description: "Short desc 1",
+        long_description: "Long desc 1",
+        website_url: "https://google.com",
+        logoUrl: "https://c1.img",
+        main_image_url: "https://main1.img",
+        looking_for: "Graphic Designer",
       });
   await Company.create(
       {
-        handle: "c2",
-        name: "C2",
-        numEmployees: 2,
-        description: "Desc2",
-        logoUrl: "http://c2.img",
+        company_name: "C2",
+        country: "Japan",
+        numEmployees: 300,
+        short_description: "Short desc 2",
+        long_description: "Long desc 2",
+        website_url: "https://cnn.com",
+        logoUrl: "https://c2.img",
+        main_image_url: "https://main2.img",
+        looking_for: "Writer",
       });
   await Company.create(
       {
-        handle: "c3",
-        name: "C3",
-        numEmployees: 3,
-        description: "Desc3",
-        logoUrl: "http://c3.img",
+        company_name: "C3",
+        country: "Canada",
+        numEmployees: 700,
+        short_description: "Short desc 3",
+        long_description: "Long desc 3",
+        website_url: "https://facebook.com",
+        logoUrl: "https://c3.img",
+        main_image_url: "https://main3.img",
+        looking_for: "Manager",
       });
 
   await User.register({
@@ -42,7 +55,7 @@ async function commonBeforeAll() {
     lastName: "U1L",
     email: "user1@user.com",
     password: "password1",
-    isAdmin: false,
+    skill: "UX Designer",
   });
   await User.register({
     username: "u2",
@@ -50,7 +63,7 @@ async function commonBeforeAll() {
     lastName: "U2L",
     email: "user2@user.com",
     password: "password2",
-    isAdmin: false,
+    skill: "Analyst",
   });
   await User.register({
     username: "u3",
@@ -58,8 +71,10 @@ async function commonBeforeAll() {
     lastName: "U3L",
     email: "user3@user.com",
     password: "password3",
-    isAdmin: false,
+    skill: "Chef",
   });
+
+  await User.applyToCompany("u1", 1);
 }
 
 async function commonBeforeEach() {
@@ -75,7 +90,9 @@ async function commonAfterAll() {
 }
 
 
-const u1Token = createToken({ username: "u1", isAdmin: false });
+const u1Token = createToken({ username: "u1" });
+const u2Token = createToken({ username: "u2" });
+const u3Token = createToken({ username: "u3" });
 
 
 module.exports = {
@@ -84,4 +101,6 @@ module.exports = {
   commonAfterEach,
   commonAfterAll,
   u1Token,
+  u2Token,
+  u3Token,
 };

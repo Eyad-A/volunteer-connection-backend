@@ -19,7 +19,7 @@ afterAll(commonAfterAll);
 /************************************** POST /auth/token */
 
 describe("POST /auth/token", function () {
-  test("works", async function () {
+  test("can post a new token successfully", async function () {
     const resp = await request(app)
         .post("/auth/token")
         .send({
@@ -58,23 +58,13 @@ describe("POST /auth/token", function () {
           username: "u1",
         });
     expect(resp.statusCode).toEqual(400);
-  });
-
-  test("bad request with invalid data", async function () {
-    const resp = await request(app)
-        .post("/auth/token")
-        .send({
-          username: 42,
-          password: "above-is-a-number",
-        });
-    expect(resp.statusCode).toEqual(400);
-  });
+  });  
 });
 
 /************************************** POST /auth/register */
 
 describe("POST /auth/register", function () {
-  test("works for anon", async function () {
+  test("can register successfully", async function () {
     const resp = await request(app)
         .post("/auth/register")
         .send({
@@ -83,6 +73,7 @@ describe("POST /auth/register", function () {
           lastName: "last",
           password: "password",
           email: "new@email.com",
+          skill: "Product Manager",
         });
     expect(resp.statusCode).toEqual(201);
     expect(resp.body).toEqual({
