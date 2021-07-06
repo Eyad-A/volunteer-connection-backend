@@ -16,7 +16,7 @@ const { BCRYPT_WORK_FACTOR } = require("../config.js");
 class User {
   /** authenticate user with username, password.
    *
-   * Returns { username, first_name, last_name, email, is_admin }
+   * Returns { username, first_name, last_name, email, skill }
    *
    * Throws UnauthorizedError is user not found or wrong password.
    **/
@@ -24,15 +24,15 @@ class User {
   static async authenticate(username, password) {
     // try to find the user first
     const result = await db.query(
-          `SELECT username,
+      `SELECT username,
                   password,
                   first_name AS "firstName",
                   last_name AS "lastName",
                   email,
-                  is_admin AS "isAdmin"
+                  skill
            FROM users
            WHERE username = $1`,
-        [username],
+      [username],
     );
 
     const user = result.rows[0];
@@ -51,18 +51,18 @@ class User {
 
   /** Register user with data.
    *
-   * Returns { username, firstName, lastName, email, isAdmin }
+   * Returns { username, firstName, lastName, email, skill }
    *
    * Throws BadRequestError on duplicates.
    **/
 
   static async register(
-      { username, password, firstName, lastName, email, isAdmin }) {
+    { username, password, firstName, lastName, email, skill }) {
     const duplicateCheck = await db.query(
-          `SELECT username
+      `SELECT username
            FROM users
            WHERE username = $1`,
-        [username],
+      [username],
     );
 
     if (duplicateCheck.rows[0]) {
@@ -72,23 +72,23 @@ class User {
     const hashedPassword = await bcrypt.hash(password, BCRYPT_WORK_FACTOR);
 
     const result = await db.query(
-          `INSERT INTO users
+      `INSERT INTO users
            (username,
             password,
             first_name,
             last_name,
             email,
-            is_admin)
+            skill)
            VALUES ($1, $2, $3, $4, $5, $6)
-           RETURNING username, first_name AS "firstName", last_name AS "lastName", email, is_admin AS "isAdmin"`,
-        [
-          username,
-          hashedPassword,
-          firstName,
-          lastName,
-          email,
-          isAdmin,
-        ],
+           RETURNING username, first_name AS "firstName", last_name AS "lastName", email, skill`,
+      [
+        username,
+        hashedPassword,
+        firstName,
+        lastName,
+        email,
+        skill,
+      ],
     );
 
     const user = result.rows[0];
@@ -103,11 +103,11 @@ class User {
 
   static async findAll() {
     const result = await db.query(
-          `SELECT username,
+      `SELECT username,
                   first_name AS "firstName",
                   last_name AS "lastName",
                   email,
-                  is_admin AS "isAdmin"
+                  skill
            FROM users
            ORDER BY username`,
     );
@@ -117,27 +117,33 @@ class User {
 
   /** Given a username, return data about user.
    *
-   * Returns { username, first_name, last_name, is_admin, jobs }
-   *   where jobs is { id, title, company_handle, company_name, state }
+   * Returns { username, first_name, last_name, skill, connections }   *   
    *
    * Throws NotFoundError if user not found.
    **/
 
   static async get(username) {
     const userRes = await db.query(
-          `SELECT username,
+      `SELECT username,
                   first_name AS "firstName",
                   last_name AS "lastName",
                   email,
-                  is_admin AS "isAdmin"
+                  skill
            FROM users
            WHERE username = $1`,
-        [username],
+      [username],
     );
 
     const user = userRes.rows[0];
 
     if (!user) throw new NotFoundError(`No user: ${username}`);
+
+    const userConnectionsRes = await db.query(
+      `SELECT c.company_id
+      FROM connections AS c
+      WHERE c.username =$1`, [username]);
+
+    user.connections = userConnectionsRes.rows.map(c => c.company_id);
 
     return user;
   }
@@ -148,15 +154,12 @@ class User {
    * all the fields; this only changes provided ones.
    *
    * Data can include:
-   *   { firstName, lastName, password, email, isAdmin }
+   *   { firstName, lastName, password, email, skill }
    *
-   * Returns { username, firstName, lastName, email, isAdmin }
+   * Returns { username, firstName, lastName, email, skill }
    *
-   * Throws NotFoundError if not found.
-   *
-   * WARNING: this function can set a new password or make a user an admin.
-   * Callers of this function must be certain they have validated inputs to this
-   * or a serious security risks are opened.
+   * Throws NotFoundError if not found.*
+   * 
    */
 
   static async update(username, data) {
@@ -165,12 +168,11 @@ class User {
     }
 
     const { setCols, values } = sqlForPartialUpdate(
-        data,
-        {
-          firstName: "first_name",
-          lastName: "last_name",
-          isAdmin: "is_admin",
-        });
+      data,
+      {
+        firstName: "first_name",
+        lastName: "last_name",
+      });
     const usernameVarIdx = "$" + (values.length + 1);
 
     const querySql = `UPDATE users 
@@ -180,7 +182,7 @@ class User {
                                 first_name AS "firstName",
                                 last_name AS "lastName",
                                 email,
-                                is_admin AS "isAdmin"`;
+                                skill`;
     const result = await db.query(querySql, [...values, username]);
     const user = result.rows[0];
 
@@ -194,15 +196,38 @@ class User {
 
   static async remove(username) {
     let result = await db.query(
-          `DELETE
+      `DELETE
            FROM users
            WHERE username = $1
            RETURNING username`,
-        [username],
+      [username],
     );
     const user = result.rows[0];
 
     if (!user) throw new NotFoundError(`No user: ${username}`);
+  }
+
+  static async applyToCompany(username, company_id) {
+    const preCheck = await db.query(
+      `SELECT company_id
+       FROM companies
+       WHERE id = $1`, [company_id]);
+    const company = preCheck.rows[0];
+
+    if (!company) throw new NotFoundError(`No company: ${company_id}`);
+
+    const preCheck2 = await db.query(
+      `SELECT username
+       FROM users
+       WHERE username = $1`, [username]);
+    const user = preCheck2.rows[0];
+
+    if (!user) throw new NotFoundError(`No username: ${username}`);
+
+    await db.query(
+      `INSERT INTO connections (username, company_id)
+       VALUES ($1, $2)`,
+      [username, company_id]);
   }
 }
 
