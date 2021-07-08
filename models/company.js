@@ -28,9 +28,9 @@ class Company {
 
     const result = await db.query(
           `INSERT INTO companies
-           (company_name, country, num_employees, short_description, long_description, website_url, logoUrl, main_image_url, looking_for)
+           (company_name, country, num_employees, short_description, long_description, website_url, logo_url, main_image_url, looking_for)
            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
-           RETURNING company_name AS "companyName", country, num_employees AS "numEmployees", short_description AS "shortDescription", long_description AS "longDescription", website_url AS "websiteUrl", logoUrl AS "logoUrl, main_image_url AS "mainImageUrl", looking_for AS "lookingFor"`,
+           RETURNING company_name AS "companyName", country, num_employees AS "numEmployees", short_description AS "shortDescription", long_description AS "longDescription", website_url AS "websiteUrl", logo_url AS "logoUrl", main_image_url AS "mainImageUrl", looking_for AS "lookingFor"`,
         [
           companyName, 
           country, 

@@ -77,7 +77,7 @@ router.get("/:company_id", async function (req, res, next) {
  * Authorization required: login
  */
 
-router.patch("/:company_id", ensureLoggedIn, async function (req, res, next) {
+router.patch("/:company_id", async function (req, res, next) {
   try {
     const validator = jsonschema.validate(req.body, companyUpdateSchema);
     if (!validator.valid) {
