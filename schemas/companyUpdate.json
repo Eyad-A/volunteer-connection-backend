@@ -3,7 +3,7 @@
   "$id": "http://our.company.com/companyUpdate.schema.json",
   "type": "object",
   "properties": {
-    "company_name": {
+    "companyName": {
       "type": "string",
       "minLength": 1,
       "maxLength": 50
@@ -15,13 +15,13 @@
       "type": "integer",
       "minimum": 0
     },
-    "short_description": {
+    "shortDescription": {
       "type": "string"
     },
-    "long_description": {
+    "longDescription": {
       "type": "string"
     },
-    "website_url": {
+    "websiteUrl": {
       "type": "string",
       "format": "uri"
     },
@@ -29,11 +29,11 @@
       "type": "string",
       "format": "uri"
     },
-    "main_image_url": {
+    "mainImageUrl": {
       "type": "string",
       "format": "uri"
     },
-    "looking_for": {
+    "lookingFor": {
       "type": "string"
     }
   },

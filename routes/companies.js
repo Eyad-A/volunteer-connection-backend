@@ -20,8 +20,6 @@ const router = new express.Router();
  * company should be { handle, name, description, numEmployees, logoUrl }
  *
  * Returns { handle, name, description, numEmployees, logoUrl }
- *
- * Authorization required: login
  */
 
 router.post("/", async function (req, res, next) {

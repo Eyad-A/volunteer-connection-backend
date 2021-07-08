@@ -15,33 +15,29 @@ const userUpdateSchema = require("../schemas/userUpdate.json");
 const router = express.Router();
 
 
-/** POST / { user }  => { user, token }
- *
- * Adds a new user. This is not the registration endpoint --- instead, this is
- * only for admin users to add new users. The new user being added can be an
- * admin.
+/** POST / { user }  => { user, token } * 
  *
  * This returns the newly created user and an authentication token for them:
- *  {user: { username, firstName, lastName, email, isAdmin }, token }
+ *  {user: { username, firstName, lastName, email, skill }, token }
  *
- * Authorization required: login
+ * Authorization required: none
  **/
 
-// router.post("/", ensureLoggedIn, async function (req, res, next) {
-//   try {
-//     const validator = jsonschema.validate(req.body, userNewSchema);
-//     if (!validator.valid) {
-//       const errs = validator.errors.map(e => e.stack);
-//       throw new BadRequestError(errs);
-//     }
+router.post("/", async function (req, res, next) {
+  try {
+    const validator = jsonschema.validate(req.body, userNewSchema);
+    if (!validator.valid) {
+      const errs = validator.errors.map(e => e.stack);
+      throw new BadRequestError(errs);
+    }
 
-//     const user = await User.register(req.body);
-//     const token = createToken(user);
-//     return res.status(201).json({ user, token });
-//   } catch (err) {
-//     return next(err);
-//   }
-// });
+    const user = await User.register(req.body);
+    const token = createToken(user);
+    return res.status(201).json({ user, token });
+  } catch (err) {
+    return next(err);
+  }
+});
 
 
 /** GET / => { users: [ {username, firstName, lastName, email }, ... ] }
