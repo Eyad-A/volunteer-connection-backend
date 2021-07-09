@@ -28,7 +28,7 @@ class Company {
     if (duplicateCheck.rows[0])
       throw new BadRequestError(`Duplicate company: ${companyHandle}`);
 
-    const hashedPassword = await bcrypt.hash(password, BCRYPT_WORK_FACTOR);
+    const hashedPassword = await bcrypt.hash(password, BCRYPT_WORK_FACTOR);    
 
     const result = await db.query(
           `INSERT INTO companies

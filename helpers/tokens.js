@@ -3,7 +3,7 @@ const { SECRET_KEY } = require("../config");
 
 /** return signed JWT from user data. */
 
-function createTokenForUser(user) {
+function createToken(user) {
   console.assert(undefined,
       "createToken passed user with an undefined user");
 
@@ -13,17 +13,5 @@ function createTokenForUser(user) {
 
   return jwt.sign(payload, SECRET_KEY);
 }
-
-function createTokenForCompany(company) {
-  console.assert(undefined,
-      "createToken passed user with an undefined user");
-
-  let payload = {
-    companyHandle: company.companyHandle
-  };
-
-  return jwt.sign(payload, SECRET_KEY);
-}
-
-module.exports = { createTokenForUser };
-module.exports = { createTokenForCompany };
+ 
+module.exports = { createToken };

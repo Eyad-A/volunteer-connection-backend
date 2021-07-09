@@ -10,7 +10,7 @@
     },
     "password": {
       "type": "string",
-      "minLength": 5,
+      "minLength": 4,
       "maxLength": 20
     },
     "firstName": {
