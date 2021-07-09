@@ -47,14 +47,14 @@ router.post("/", async function (req, res, next) {
  * Authorization required: login
  **/
 
-// router.get("/", ensureLoggedIn, async function (req, res, next) {
-//   try {
-//     const users = await User.findAll();
-//     return res.json({ users });
-//   } catch (err) {
-//     return next(err);
-//   }
-// });
+router.get("/", async function (req, res, next) {
+  try {
+    const users = await User.findAll();
+    return res.json({ users });
+  } catch (err) {
+    return next(err);
+  }
+});
 
 
 /** GET /[username] => { user }
@@ -64,7 +64,7 @@ router.post("/", async function (req, res, next) {
  * Authorization required: login
  **/
 
-router.get("/:username", ensureLoggedIn, async function (req, res, next) {
+router.get("/:username", async function (req, res, next) {
   try {
     const user = await User.get(req.params.username);
     return res.json({ user });
@@ -84,7 +84,7 @@ router.get("/:username", ensureLoggedIn, async function (req, res, next) {
  * Authorization required: login
  **/
 
-router.patch("/:username", ensureCorrectUser, async function (req, res, next) {
+router.patch("/:username", async function (req, res, next) {
   try {
     const validator = jsonschema.validate(req.body, userUpdateSchema);
     if (!validator.valid) {
