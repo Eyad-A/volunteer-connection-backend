@@ -207,11 +207,11 @@ class User {
     if (!user) throw new NotFoundError(`No user: ${username}`);
   }
 
-  static async applyToCompany(username, companyHandle) {
+  static async connectToCompany(username, companyHandle) {
     const preCheck = await db.query(
       `SELECT company_handle
        FROM companies
-       WHERE id = $1`, [companyHandle]);
+       WHERE company_handle = $1`, [companyHandle]);
     const company = preCheck.rows[0];
 
     if (!company) throw new NotFoundError(`No company: ${companyHandle}`);
@@ -227,7 +227,7 @@ class User {
     await db.query(
       `INSERT INTO connections (username, company_handle)
        VALUES ($1, $2)`,
-      [username, company_handle]);
+      [username, companyHandle]);
   }
 }
 

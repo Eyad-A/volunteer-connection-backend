@@ -111,7 +111,8 @@ class Company {
       [companyHandle],
     );
 
-    company.users = connectionRes.rows;
+    company.users = connectionRes.rows.map(u => u.username);
+    // user.connections = userConnectionsRes.rows.map(c => c.company_handle);
     
     return company;
   }
@@ -178,7 +179,7 @@ class Company {
     const company = result.rows[0];
 
     if (!company) throw new NotFoundError(`No company: ${companyHandle}`);
-  }
+  }  
 }
 
 

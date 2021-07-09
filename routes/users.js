@@ -99,20 +99,20 @@ router.patch("/:username", async function (req, res, next) {
   }
 });
 
+/**
+ * POST /:username/:companyHandle 
+ * Returns {"connections": companyHandle}
+ */
 
-/** DELETE /[username]  =>  { deleted: username }
- *
- * Authorization required: login
- **/
-
-// router.delete("/:username", ensureLoggedIn, async function (req, res, next) {
-//   try {
-//     await User.remove(req.params.username);
-//     return res.json({ deleted: req.params.username });
-//   } catch (err) {
-//     return next(err);
-//   }
-// });
+router.post("/:username/:company_handle", async function (req, res, next) {
+  try {
+    const companyHandle = req.params.company_handle;
+    await User.connectToCompany(req.params.username, companyHandle);
+    return res.json({ connected: companyHandle });
+  } catch (err) {
+    return next(err);
+  }
+});
 
 
 module.exports = router;
