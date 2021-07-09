@@ -185,26 +185,3 @@ describe("PATCH /companies/:company_handle", function () {
   });
 });
 
-/************************************** DELETE /companies/:handle */
-
-// describe("DELETE /companies/:handle", function () {
-//   test("works for users", async function () {
-//     const resp = await request(app)
-//       .delete(`/companies/c1`)
-//       .set("authorization", `Bearer ${u1Token}`);
-//     expect(resp.body).toEqual({ deleted: "c1" });
-//   });
-
-//   test("unauth for anon", async function () {
-//     const resp = await request(app)
-//       .delete(`/companies/c1`);
-//     expect(resp.statusCode).toEqual(401);
-//   });
-
-//   test("not found for no such company", async function () {
-//     const resp = await request(app)
-//       .delete(`/companies/nope`)
-//       .set("authorization", `Bearer ${u1Token}`);
-//     expect(resp.statusCode).toEqual(404);
-//   });
-// });

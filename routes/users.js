@@ -43,8 +43,6 @@ router.post("/", async function (req, res, next) {
 /** GET / => { users: [ {username, firstName, lastName, email }, ... ] }
  *
  * Returns list of all users.
- *
- * Authorization required: login
  **/
 
 router.get("/", async function (req, res, next) {
@@ -84,7 +82,7 @@ router.get("/:username", async function (req, res, next) {
  * Authorization required: login
  **/
 
-router.patch("/:username", async function (req, res, next) {
+router.patch("/:username", ensureCorrectUser, async function (req, res, next) {
   try {
     const validator = jsonschema.validate(req.body, userUpdateSchema);
     if (!validator.valid) {
@@ -104,7 +102,7 @@ router.patch("/:username", async function (req, res, next) {
  * Returns {"connections": companyHandle}
  */
 
-router.post("/:username/:company_handle", async function (req, res, next) {
+router.post("/:username/:company_handle", ensureCorrectUser, async function (req, res, next) {
   try {
     const companyHandle = req.params.company_handle;
     await User.connectToCompany(req.params.username, companyHandle);

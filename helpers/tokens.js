@@ -8,7 +8,8 @@ function createToken(user) {
       "createToken passed user with an undefined user");
 
   let payload = {
-    username: user.username
+    username: user.username,
+    companyHandle: user.companyHandle
   };
 
   return jwt.sign(payload, SECRET_KEY);

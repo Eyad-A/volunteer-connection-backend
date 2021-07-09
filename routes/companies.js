@@ -6,7 +6,7 @@ const jsonschema = require("jsonschema");
 const express = require("express");
 
 const { BadRequestError } = require("../expressError");
-const { ensureLoggedIn } = require("../middleware/auth");
+const { ensureLoggedIn, ensureCorrectUser } = require("../middleware/auth");
 const Company = require("../models/company");
 const { createToken } = require("../helpers/tokens");
 
@@ -79,7 +79,7 @@ router.get("/:company_handle", async function (req, res, next) {
  * Authorization required: login
  */
 
-router.patch("/:company_handle", async function (req, res, next) {
+router.patch("/:company_handle", ensureCorrectUser, async function (req, res, next) {
   try {
     const validator = jsonschema.validate(req.body, companyUpdateSchema);
     if (!validator.valid) {
