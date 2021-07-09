@@ -113,9 +113,9 @@ describe("GET /companies", function () {
   });
 });
 
-/************************************** GET /companies/:company_id */
+/************************************** GET /companies/:company_handle */
 
-describe("GET /companies/:company_id", function () {
+describe("GET /companies/:company_handle", function () {
   test("can get a company successfully", async function () {
     const resp = await request(app).get(`/companies/1`);
     expect(resp.body).toEqual({
@@ -141,7 +141,7 @@ describe("GET /companies/:company_id", function () {
 
 /************************************** PATCH /companies/:handle */
 
-describe("PATCH /companies/:company_id", function () {
+describe("PATCH /companies/:company_handle", function () {
   test("can patch a company successfully", async function () {
     const resp = await request(app)
       .patch(`/companies/1`)

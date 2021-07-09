@@ -139,11 +139,11 @@ class User {
     if (!user) throw new NotFoundError(`No user: ${username}`);
 
     const userConnectionsRes = await db.query(
-      `SELECT c.company_id
+      `SELECT c.company_handle
       FROM connections AS c
       WHERE c.username =$1`, [username]);
 
-    user.connections = userConnectionsRes.rows.map(c => c.company_id);
+    user.connections = userConnectionsRes.rows.map(c => c.company_handle);
 
     return user;
   }
@@ -207,14 +207,14 @@ class User {
     if (!user) throw new NotFoundError(`No user: ${username}`);
   }
 
-  static async applyToCompany(username, company_id) {
+  static async applyToCompany(username, companyHandle) {
     const preCheck = await db.query(
-      `SELECT company_id
+      `SELECT company_handle
        FROM companies
-       WHERE id = $1`, [company_id]);
+       WHERE id = $1`, [companyHandle]);
     const company = preCheck.rows[0];
 
-    if (!company) throw new NotFoundError(`No company: ${company_id}`);
+    if (!company) throw new NotFoundError(`No company: ${companyHandle}`);
 
     const preCheck2 = await db.query(
       `SELECT username
@@ -225,9 +225,9 @@ class User {
     if (!user) throw new NotFoundError(`No username: ${username}`);
 
     await db.query(
-      `INSERT INTO connections (username, company_id)
+      `INSERT INTO connections (username, company_handle)
        VALUES ($1, $2)`,
-      [username, company_id]);
+      [username, company_handle]);
   }
 }
 

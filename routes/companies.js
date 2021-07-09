@@ -8,7 +8,7 @@ const express = require("express");
 const { BadRequestError } = require("../expressError");
 const { ensureLoggedIn } = require("../middleware/auth");
 const Company = require("../models/company");
-const { createToken } = require("../helpers/tokens");
+const { createTokenForCompany } = require("../helpers/tokens");
 
 const companyNewSchema = require("../schemas/companyNew.json");
 const companyUpdateSchema = require("../schemas/companyUpdate.json");
@@ -32,7 +32,7 @@ router.post("/", async function (req, res, next) {
     }
 
     const company = await Company.create(req.body);
-    const token = createToken(user);
+    const token = createTokenForCompany(company);
     return res.status(201).json({ company, token });
   } catch (err) {
     return next(err);
@@ -54,7 +54,7 @@ router.get("/", async function (req, res, next) {
   }
 });
 
-/** GET /[company_id]  =>  { company }
+/** GET /[company_handle]  =>  { company }
  *
  *  Company is { company_name, country, num_employees, short_description, long_description, website_url, logoUrl, main_image_url, looking_for } 
  *
@@ -63,7 +63,7 @@ router.get("/", async function (req, res, next) {
 
 router.get("/:company_handle", async function (req, res, next) {
   try {
-    const company = await Company.get(req.params.company_id);
+    const company = await Company.get(req.params.company_handle);
     return res.json({ company });
   } catch (err) {
     return next(err);
@@ -87,7 +87,7 @@ router.patch("/:company_handle", async function (req, res, next) {
       throw new BadRequestError(errs);
     }
 
-    const company = await Company.update(req.params.company_id, req.body);
+    const company = await Company.update(req.params.company_handle, req.body);
     return res.json({ company });
   } catch (err) {
     return next(err);

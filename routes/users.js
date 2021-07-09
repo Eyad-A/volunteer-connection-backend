@@ -8,7 +8,7 @@ const express = require("express");
 const { ensureLoggedIn, ensureCorrectUser } = require("../middleware/auth");
 const { BadRequestError } = require("../expressError");
 const User = require("../models/user");
-const { createToken } = require("../helpers/tokens");
+const { createTokenForUser } = require("../helpers/tokens");
 const userNewSchema = require("../schemas/userNew.json");
 const userUpdateSchema = require("../schemas/userUpdate.json");
 
@@ -32,7 +32,7 @@ router.post("/", async function (req, res, next) {
     }
 
     const user = await User.register(req.body);
-    const token = createToken(user);
+    const token = createTokenForUser(user);
     return res.status(201).json({ user, token });
   } catch (err) {
     return next(err);

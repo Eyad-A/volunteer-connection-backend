@@ -3,6 +3,8 @@
 const db = require("../db");
 const { BadRequestError, NotFoundError } = require("../expressError");
 const { sqlForPartialUpdate } = require("../helpers/sql");
+const bcrypt = require("bcrypt");
+const { BCRYPT_WORK_FACTOR } = require("../config.js");
 
 /** Related functions for companies. */
 
@@ -16,7 +18,7 @@ class Company {
    * Throws BadRequestError if company already in database.
    * */
 
-  static async create({ companyHandle, password,  companyName, country, numEmployees, shortDescription, longDescription, websiteUrl, logoUrl, mainImageUrl, lookingFor }) {
+  static async create({ companyHandle, password, companyName, country, numEmployees, shortDescription, longDescription, websiteUrl, logoUrl, mainImageUrl, lookingFor }) {
     const duplicateCheck = await db.query(
           `SELECT company_handle
            FROM companies
@@ -69,7 +71,7 @@ class Company {
             main_image_url AS "mainImageUrl", 
             looking_for AS "lookingFor"
           FROM companies
-          ORDER BY company_id`);
+          ORDER BY company_handle`);
     return companiesRes.rows;
   }
 
@@ -99,7 +101,7 @@ class Company {
 
     const company = companyRes.rows[0];
 
-    if (!company) throw new NotFoundError(`No company: ${company_id}`);
+    if (!company) throw new NotFoundError(`No company: ${companyHandle}`);
 
     const connectionRes = await db.query(
       `SELECT username 

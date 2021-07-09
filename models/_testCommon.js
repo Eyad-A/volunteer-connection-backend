@@ -36,7 +36,7 @@ async function commonBeforeAll() {
       ]);
 
   await db.query(`
-  INSERT INTO connections(username, company_id)
+  INSERT INTO connections(username, company_handle)
   VALUES ('u1', 1)`)
 }
 
