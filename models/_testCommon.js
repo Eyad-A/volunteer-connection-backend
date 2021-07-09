@@ -10,10 +10,15 @@ async function commonBeforeAll() {
   await db.query("DELETE FROM users");
 
   await db.query(`
-    INSERT INTO companies(company_name, country, num_employees, short_description, long_description, website_url, logo_url, main_image_url, looking_for)
-    VALUES ('Apple', 'USA', 600, 'Creators of the iPhone', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec convallis, ex nec hendrerit lacinia, augue arcu pharetra odio, pharetra semper tortor erat non urna.', 'https://apple.com', 'https://c1.img', 'https://c1-main.img', 'Web Developer'),
-           ('Google', 'Germany', 800, 'Creators of Android', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec convallis, ex nec hendrerit lacinia, augue arcu pharetra odio, pharetra semper tortor erat non urna.', 'https://google.com', 'https://c2.img', 'https://c2-main.img', 'Graphic Designer'),
-           ('Microsoft', 'Japan', 500, 'Creators of Windows', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec convallis, ex nec hendrerit lacinia, augue arcu pharetra odio, pharetra semper tortor erat non urna.', 'https://microsoft.com', 'https://c3.img', 'https://c3-main.img', 'Analyst')`);
+    INSERT INTO companies(company_handle, password, company_name, country, num_employees, short_description, long_description, website_url, logo_url, main_image_url, looking_for)
+    VALUES ('appl', $1, 'Apple', 'USA', 600, 'Creators of the iPhone', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec convallis, ex nec hendrerit lacinia, augue arcu pharetra odio, pharetra semper tortor erat non urna.', 'https://apple.com', 'https://c1.img', 'https://c1-main.img', 'Web Developer'),
+           ('gogl', $2, 'Google', 'Germany', 800, 'Creators of Android', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec convallis, ex nec hendrerit lacinia, augue arcu pharetra odio, pharetra semper tortor erat non urna.', 'https://google.com', 'https://c2.img', 'https://c2-main.img', 'Graphic Designer'),
+           ('msft', $3, 'Microsoft', 'Japan', 500, 'Creators of Windows', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec convallis, ex nec hendrerit lacinia, augue arcu pharetra odio, pharetra semper tortor erat non urna.', 'https://microsoft.com', 'https://c3.img', 'https://c3-main.img', 'Analyst')`,
+           [
+             await bcrypt.hash("password1", BCRYPT_WORK_FACTOR),
+             await bcrypt.hash("password2", BCRYPT_WORK_FACTOR),
+             await bcrypt.hash("password3", BCRYPT_WORK_FACTOR),
+           ]);
 
   await db.query(`
         INSERT INTO users(username,

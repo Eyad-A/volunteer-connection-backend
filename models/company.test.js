@@ -19,24 +19,28 @@ afterAll(commonAfterAll);
 
 describe("create", function () {
   const newCompany = {
-    company_name: "My new company",
+    companyHandle: "mnc",
+    companyName: "My new company",
     country: "USA",
     numEmployees: 500,
-    short_description: "Great company",
-    long_description: "Really great company",
-    website_url: "https://google.com",
+    shortDescription: "Great company",
+    longDescription: "Really great company",
+    websiteUrl: "https://google.com",
     logoUrl: "https://new.img",
-    main_image_url: "https://main.img",
-    looking_for: "Web Developer",
+    mainImageUrl: "https://main.img",
+    lookingFor: "Web Developer",
   };
 
   test("Can create a new company", async function () {
-    let company = await Company.create(newCompany);
+    let company = await Company.create({
+      ...newCompany,
+      password: "password",
+    });
     expect(company).toEqual(newCompany);
 
     const result = await db.query(
       // company_name, country, num_employees, short_description, long_description, website_url, logoUrl, main_image_url, looking_for  // 
-      `SELECT company_id, 
+      `SELECT company_handle, 
             company_name, 
             country, 
             num_employees, 
@@ -47,9 +51,10 @@ describe("create", function () {
             main_image_url, 
             looking_for
            FROM companies
-           WHERE company_name = 'My new company'`);
+           WHERE company_handle = 'mnc'`);
     expect(result.rows).toEqual([
       {
+        company_handle: "mnc",
         company_name: "My new company",
         country: "USA",
         numEmployees: 500,
@@ -71,38 +76,41 @@ describe("findAll", function () {
     let companies = await Company.findAll();
     expect(companies).toEqual([
       {
-        company_name: "Apple",
+        companyHandle: "appl",
+        companyName: "Apple",
         country: "USA",
         numEmployees: 600,
-        short_description: "Creators of the iPhone",
-        long_description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec convallis, ex nec hendrerit lacinia, augue arcu pharetra odio, pharetra semper tortor erat non urna.",
-        website_url: "https://apple.com",
+        shortDescription: "Creators of the iPhone",
+        longDescription: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec convallis, ex nec hendrerit lacinia, augue arcu pharetra odio, pharetra semper tortor erat non urna.",
+        websiteUrl: "https://apple.com",
         logoUrl: "http://c1.img",
-        main_image_url: "https://c1-main.img",
-        looking_for: "Web Developer",
+        mainImageUrl: "https://c1-main.img",
+        lookingFor: "Web Developer",
       },
       {
-        company_name: "Google",
+        companyHandle: "gogl",
+        companyName: "Google",
         country: "Germany",
         numEmployees: 800,
-        short_description: "Creators of Android",
-        long_description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec convallis, ex nec hendrerit lacinia, augue arcu pharetra odio, pharetra semper tortor erat non urna.",
-        website_url: "https://google.com",
+        shortDescription: "Creators of Android",
+        longDescription: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec convallis, ex nec hendrerit lacinia, augue arcu pharetra odio, pharetra semper tortor erat non urna.",
+        websiteUrl: "https://google.com",
         logoUrl: "http://c2.img",
-        main_image_url: "https://c2-main.img",
-        looking_for: "Graphic Designer",
+        mainImageUrl: "https://c2-main.img",
+        lookingFor: "Graphic Designer",
       },
       {
         //'Microsoft', 'Japan', 500, 'Creators of Windows', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec convallis, ex nec hendrerit lacinia, augue arcu pharetra odio, pharetra semper tortor erat non urna.', 'https://microsoft.com', 'https://c3.img', 'https://c3-main.img', 'Analyst'
-        company_name: "Microsoft",
+        companyHandle: "mcsf",
+        companyName: "Microsoft",
         country: "Japan",
         numEmployees: 500,
-        short_description: "Creators of Windows",
-        long_description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec convallis, ex nec hendrerit lacinia, augue arcu pharetra odio, pharetra semper tortor erat non urna.",
-        website_url: "https://microsoft.com",
+        shortDescription: "Creators of Windows",
+        longDescription: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec convallis, ex nec hendrerit lacinia, augue arcu pharetra odio, pharetra semper tortor erat non urna.",
+        websiteUrl: "https://microsoft.com",
         logoUrl: "http://c3.img",
-        main_image_url: "https://c3-main.img",
-        looking_for: "Analyst",
+        mainImageUrl: "https://c3-main.img",
+        lookingFor: "Analyst",
       },
     ]);
   });
@@ -111,24 +119,25 @@ describe("findAll", function () {
 /************************************** get */
 
 describe("get", function () {
-  test("Can get a company by ID", async function () {
-    let company = await Company.get(1);
+  test("Can get a company by handle", async function () {
+    let company = await Company.get("appl");
     expect(company).toEqual({
-      company_name: "Apple",
+      companyHandle: "appl",
+      companyName: "Apple",
       country: "USA",
       numEmployees: 600,
-      short_description: "Creators of the iPhone",
-      long_description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec convallis, ex nec hendrerit lacinia, augue arcu pharetra odio, pharetra semper tortor erat non urna.",
-      website_url: "https://apple.com",
+      shortDescription: "Creators of the iPhone",
+      longDescription: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec convallis, ex nec hendrerit lacinia, augue arcu pharetra odio, pharetra semper tortor erat non urna.",
+      websiteUrl: "https://apple.com",
       logoUrl: "http://c1.img",
-      main_image_url: "https://c1-main.img",
-      looking_for: "Web Developer",
+      mainImageUrl: "https://c1-main.img",
+      lookingfor: "Web Developer",
     });
   });
 
   test("not found if no such company", async function () {
     try {
-      await Company.get(96585);
+      await Company.get("zzzzzz");
       fail();
     } catch (err) {
       expect(err instanceof NotFoundError).toBeTruthy();
@@ -140,45 +149,46 @@ describe("get", function () {
 
 describe("update", function () {
   const updateData = {
-    company_name: "New name",
+    companyHandle: "nwn",
+    companyName: "New name",
     country: "Italy",
     numEmployees: 500,
-    short_description: "Creators of the iPhone",
-    long_description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec convallis, ex nec hendrerit lacinia, augue arcu pharetra odio, pharetra semper tortor erat non urna.",
-    website_url: "https://apple.com",
+    shortDescription: "Creators of the iPhone",
+    longDescription: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec convallis, ex nec hendrerit lacinia, augue arcu pharetra odio, pharetra semper tortor erat non urna.",
+    websiteUrl: "https://apple.com",
     logoUrl: "http://c1.img",
-    main_image_url: "https://c1-main.img",
-    looking_for: "Web Developer",
+    mainImageUrl: "https://c1-main.img",
+    lookingFor: "Web Developer",
   };
 
   test("Able to update company info", async function () {
-    let company = await Company.update(1, updateData);
+    let company = await Company.update("appl", updateData);
     expect(company).toEqual({
-      company_id: "c1",
+      companyHandle: "aple",
       ...updateData,
     });
 
     const result = await db.query(
-      `SELECT company_name, country, num_employees, short_description, long_description, website_url, logo_url, main_image_url, looking_for
+      `SELECT company_handle, company_name, country, num_employees, short_description, long_description, website_url, logo_url, main_image_url, looking_for
            FROM companies
-           WHERE company_id = 1`);
+           WHERE company_handle = 'appl'`);
     expect(result.rows).toEqual([{
-      company_id: 1,
-      company_name: "New name",
+      companyHandle: "appl",
+      companyName: "New name",
       country: "Italy",
       numEmployees: 500,
-      short_description: "Creators of the iPhone",
-      long_description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec convallis, ex nec hendrerit lacinia, augue arcu pharetra odio, pharetra semper tortor erat non urna.",
-      website_url: "https://apple.com",
+      shortDescription: "Creators of the iPhone",
+      longDescription: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec convallis, ex nec hendrerit lacinia, augue arcu pharetra odio, pharetra semper tortor erat non urna.",
+      websiteUrl: "https://apple.com",
       logoUrl: "http://c1.img",
-      main_image_url: "https://c1-main.img",
-      looking_for: "Web Developer",
+      mainImageUrl: "https://c1-main.img",
+      lookingFor: "Web Developer",
     }]);
   });  
 
   test("not found if no such company", async function () {
     try {
-      await Company.update(89874, updateData);
+      await Company.update('zzzzz', updateData);
       fail();
     } catch (err) {
       expect(err instanceof NotFoundError).toBeTruthy();

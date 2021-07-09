@@ -60,7 +60,7 @@ describe("register", function () {
     firstName: "Test",
     lastName: "Tester",
     email: "test@test.com",
-    skill: Accountant,
+    skill: "Accountant",
   };
 
   test("registering a new user works correctly", async function () {

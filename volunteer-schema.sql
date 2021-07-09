@@ -1,5 +1,6 @@
 CREATE TABLE companies (
-  company_id SERIAL PRIMARY KEY,
+  company_handle VARCHAR(25) PRIMARY KEY,
+  password TEXT NOT NULL,
   company_name TEXT NOT NULL,
   country TEXT NOT NULL,
   num_employees INTEGER CHECK (num_employees > 0),
@@ -23,7 +24,7 @@ CREATE TABLE users (
 CREATE TABLE connections (
   username VARCHAR(25)
     REFERENCES users ON DELETE CASCADE,
-  company_id INTEGER
+  company_handle VARCHAR(25)
     REFERENCES companies ON DELETE CASCADE,
-  PRIMARY KEY (username, company_id)
+  PRIMARY KEY (username, company_handle)
 );

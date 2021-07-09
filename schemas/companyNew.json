@@ -3,6 +3,11 @@
   "$id": "http://our.company.com/companyNew.schema.json",
   "type": "object",
   "properties": {
+    "companyHandle": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 8
+    },    
     "companyName": {
       "type": "string",
       "minLength": 1,
@@ -39,6 +44,7 @@
   },
   "additionalProperties": false,
   "required": [
+    "companyHandle",
     "companyName",
     "country",
     "shortDescription",

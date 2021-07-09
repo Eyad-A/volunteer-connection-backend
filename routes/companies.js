@@ -61,7 +61,7 @@ router.get("/", async function (req, res, next) {
  * Authorization required: none
  */
 
-router.get("/:company_id", async function (req, res, next) {
+router.get("/:company_handle", async function (req, res, next) {
   try {
     const company = await Company.get(req.params.company_id);
     return res.json({ company });
@@ -79,7 +79,7 @@ router.get("/:company_id", async function (req, res, next) {
  * Authorization required: login
  */
 
-router.patch("/:company_id", async function (req, res, next) {
+router.patch("/:company_handle", async function (req, res, next) {
   try {
     const validator = jsonschema.validate(req.body, companyUpdateSchema);
     if (!validator.valid) {
