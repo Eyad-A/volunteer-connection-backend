@@ -5,6 +5,7 @@
 const jsonschema = require("jsonschema");
 
 const User = require("../models/user");
+const Company = require("../models/company");
 const express = require("express");
 const router = new express.Router();
 const { createToken } = require("../helpers/tokens");
@@ -35,6 +36,11 @@ router.post("/login-user", async function (req, res, next) {
   }
 }); 
 
+/** POST /auth/login-company:  { companyHandle, password } => { token }
+ *
+ * Returns JWT token which can be used to authenticate further requests. 
+ */
+
 router.post("/login-company", async function (req, res, next) {
   try {
     const validator = jsonschema.validate(req.body, companyAuthSchema);
@@ -44,7 +50,7 @@ router.post("/login-company", async function (req, res, next) {
     }
 
     const { companyHandle, password } = req.body;
-    const company = await company.authenticate(companyHandle, password);
+    const company = await Company.authenticate(companyHandle, password);
     const token = createToken(company);
     return res.json({ token });
   } catch (err) {
@@ -53,14 +59,14 @@ router.post("/login-company", async function (req, res, next) {
 });
 
 
-/** POST /auth/register:   { user } => { token }
+/** POST /auth/register-user:   { user } => { token }
  *
  * user must include { username, password, firstName, lastName, email, skill }
  *
  * Returns JWT token which can be used to authenticate further requests.
  */
 
-router.post("/register", async function (req, res, next) {
+router.post("/register-user", async function (req, res, next) {
   try {
     const validator = jsonschema.validate(req.body, userRegisterSchema);
     if (!validator.valid) {
@@ -70,6 +76,28 @@ router.post("/register", async function (req, res, next) {
 
     const newUser = await User.register({ ...req.body });
     const token = createToken(newUser);
+    return res.status(201).json({ token });
+  } catch (err) {
+    return next(err);
+  }
+});
+
+
+/** POST /auth/register-company:   { company } => { token } 
+ *
+ * Returns JWT token which can be used to authenticate further requests.
+ */
+
+ router.post("/register-company", async function (req, res, next) {
+  try {
+    const validator = jsonschema.validate(req.body, companyRegisterSchema);
+    if (!validator.valid) {
+      const errs = validator.errors.map(e => e.stack);
+      throw new BadRequestError(errs);
+    }
+
+    const newCompany = await Company.register({ ...req.body });
+    const token = createToken(newCompany);
     return res.status(201).json({ token });
   } catch (err) {
     return next(err);
