@@ -1,7 +1,7 @@
 "use strict";
 
 const db = require("../db");
-const { BadRequestError, NotFoundError } = require("../expressError");
+const { BadRequestError, NotFoundError, UnauthorizedError } = require("../expressError");
 const { sqlForPartialUpdate } = require("../helpers/sql");
 const bcrypt = require("bcrypt");
 const { BCRYPT_WORK_FACTOR } = require("../config.js");
@@ -43,7 +43,7 @@ class Company {
       const isValid = await bcrypt.compare(password, company.password);
       if (isValid === true) {
         delete company.password;
-        return user;
+        return company;
       }
     }
 

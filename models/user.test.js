@@ -44,7 +44,7 @@ describe("authenticate", function () {
 
   test("unauth if wrong password", async function () {
     try {
-      await User.authenticate("c1", "wrong");
+      await User.authenticate("u1", "wrong");
       fail();
     } catch (err) {
       expect(err instanceof UnauthorizedError).toBeTruthy();
@@ -103,6 +103,7 @@ describe("get", function () {
       lastName: "U1L",
       email: "u1@email.com",
       skill: "Web Developer",
+      connections: ["appl"],
     });
   });
 

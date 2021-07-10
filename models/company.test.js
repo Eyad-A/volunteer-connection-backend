@@ -1,7 +1,7 @@
 "use strict";
 
 const db = require("../db.js");
-const { BadRequestError, NotFoundError } = require("../expressError");
+const { BadRequestError, NotFoundError, UnauthorizedError } = require("../expressError");
 const Company = require("./company.js");
 const {
   commonBeforeAll,
@@ -14,6 +14,45 @@ beforeAll(commonBeforeAll);
 beforeEach(commonBeforeEach);
 afterEach(commonAfterEach);
 afterAll(commonAfterAll);
+
+/*************************************authenticate */
+
+describe("authenticate", function () {
+  test("authenticatation works correctly", async function () {
+    const company = await Company.authenticate("appl", "password1");
+    expect(company).toEqual({
+      companyHandle: "appl",
+      companyName: "Apple",
+      country: "USA",
+      numEmployees: 600,
+      shortDescription: "Creators of the iPhone",
+      longDescription: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec convallis, ex nec hendrerit lacinia, augue arcu pharetra odio, pharetra semper tortor erat non urna.",
+      websiteUrl: "https://apple.com",
+      logoUrl: "https://c1.img",
+      mainImageUrl: "https://c1-main.img",
+      lookingFor: "Web Developer",
+    });
+  });
+
+  test("unauth if no such user", async function () {
+    try {
+      await Company.authenticate("nope", "password");
+      fail();
+    } catch (err) {
+      expect(err instanceof UnauthorizedError).toBeTruthy();
+    }
+  });
+
+  test("unauth if wrong password", async function () {
+    try {
+      await Company.authenticate("appl", "wrong");
+      fail();
+    } catch (err) {
+      expect(err instanceof UnauthorizedError).toBeTruthy();
+    }
+  });
+});
+
 
 /************************************** create */
 
@@ -38,7 +77,7 @@ describe("create", function () {
     });
     expect(company).toEqual(newCompany);
 
-    const result = await db.query(      
+    const result = await db.query(
       `SELECT company_handle, 
             company_name, 
             country, 
@@ -99,7 +138,7 @@ describe("findAll", function () {
         lookingFor: "Graphic Designer",
       },
       {
-        
+
         companyHandle: "msft",
         companyName: "Microsoft",
         country: "Japan",
@@ -183,7 +222,7 @@ describe("update", function () {
       main_image_url: "https://c1-main.img",
       looking_for: "Web Developer",
     }]);
-  });  
+  });
 
   test("not found if no such company", async function () {
     try {
@@ -192,5 +231,5 @@ describe("update", function () {
     } catch (err) {
       expect(err instanceof NotFoundError).toBeTruthy();
     }
-  });  
+  });
 });
