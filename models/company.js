@@ -9,6 +9,48 @@ const { BCRYPT_WORK_FACTOR } = require("../config.js");
 /** Related functions for companies. */
 
 class Company {
+
+  /** authenticate company with companyHandle, password.
+   *
+   * Returns { company }
+   *
+   * Throws UnauthorizedError is user not found or wrong password.
+   **/
+  
+  static async authenticate(companyHandle, password) {
+    // try to find the company first
+    const result = await db.query(
+      `SELECT company_handle AS "companyHandle",
+                  password,                  
+                  company_name AS "companyName", 
+                  country, 
+                  num_employees AS "numEmployees", 
+                  short_description AS "shortDescription", 
+                  long_description AS "longDescription", 
+                  website_url AS "websiteUrl", 
+                  logo_url AS "logoUrl", 
+                  main_image_url AS "mainImageUrl", 
+                  looking_for AS "lookingFor"
+           FROM companies
+           WHERE company_handle = $1`,
+      [companyHandle],
+    );
+
+    const company = result.rows[0];
+
+    if (company) {
+      // compare hashed password to a new hash from password
+      const isValid = await bcrypt.compare(password, company.password);
+      if (isValid === true) {
+        delete company.password;
+        return user;
+      }
+    }
+
+    throw new UnauthorizedError("Invalid username/password");
+  }
+
+
   /** Create a company (from data), update db, return new company data.
    *
    * data should be { companyName, country, numEmployees, shortDescription, longDescription, websiteUrl, logoUrl, mainImageUrl, lookingFor }
@@ -20,34 +62,34 @@ class Company {
 
   static async create({ companyHandle, password, companyName, country, numEmployees, shortDescription, longDescription, websiteUrl, logoUrl, mainImageUrl, lookingFor }) {
     const duplicateCheck = await db.query(
-          `SELECT company_handle
+      `SELECT company_handle
            FROM companies
            WHERE company_handle = $1`,
-        [companyHandle]);
+      [companyHandle]);
 
     if (duplicateCheck.rows[0])
       throw new BadRequestError(`Duplicate company: ${companyHandle}`);
 
-    const hashedPassword = await bcrypt.hash(password, BCRYPT_WORK_FACTOR);    
+    const hashedPassword = await bcrypt.hash(password, BCRYPT_WORK_FACTOR);
 
     const result = await db.query(
-          `INSERT INTO companies
+      `INSERT INTO companies
            (company_handle, password, company_name, country, num_employees, short_description, long_description, website_url, logo_url, main_image_url, looking_for)
            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
            RETURNING company_handle AS "companyHandle", company_name AS "companyName", country, num_employees AS "numEmployees", short_description AS "shortDescription", long_description AS "longDescription", website_url AS "websiteUrl", logo_url AS "logoUrl", main_image_url AS "mainImageUrl", looking_for AS "lookingFor"`,
-        [
-          companyHandle,
-          hashedPassword,
-          companyName, 
-          country, 
-          numEmployees, 
-          shortDescription, 
-          longDescription, 
-          websiteUrl, 
-          logoUrl, 
-          mainImageUrl, 
-          lookingFor,
-        ],
+      [
+        companyHandle,
+        hashedPassword,
+        companyName,
+        country,
+        numEmployees,
+        shortDescription,
+        longDescription,
+        websiteUrl,
+        logoUrl,
+        mainImageUrl,
+        lookingFor,
+      ],
     );
     const company = result.rows[0];
 
@@ -59,7 +101,7 @@ class Company {
 
   static async findAll() {
     const companiesRes = await db.query(
-          `SELECT 
+      `SELECT 
             company_handle AS "companyHandle",
             company_name AS "companyName", 
             country, 
@@ -85,7 +127,7 @@ class Company {
 
   static async get(companyHandle) {
     const companyRes = await db.query(
-          `SELECT company_handle AS "companyHandle", 
+      `SELECT company_handle AS "companyHandle", 
             company_name AS "companyName", 
             country, 
             num_employees AS "numEmployees", 
@@ -97,7 +139,7 @@ class Company {
             looking_for AS "lookingFor"
            FROM companies
            WHERE company_handle = $1`,
-        [companyHandle]);
+      [companyHandle]);
 
     const company = companyRes.rows[0];
 
@@ -113,7 +155,7 @@ class Company {
 
     company.users = connectionRes.rows.map(u => u.username);
     // user.connections = userConnectionsRes.rows.map(c => c.company_handle);
-    
+
     return company;
   }
 
@@ -129,18 +171,18 @@ class Company {
 
   static async update(companyHandle, data) {
     const { setCols, values } = sqlForPartialUpdate(
-        data,
-        {
-          companyHandle: "company_handle",
-          companyName: "company_name",
-          numEmployees: "num_employees",
-          shortDescription: "short_description",
-          longDescription: "long_description",
-          websiteUrl: "website_url",
-          logoUrl: "logo_url",
-          mainImageUrl: "main_image_url",
-          lookingFor: "looking_for"
-        });
+      data,
+      {
+        companyHandle: "company_handle",
+        companyName: "company_name",
+        numEmployees: "num_employees",
+        shortDescription: "short_description",
+        longDescription: "long_description",
+        websiteUrl: "website_url",
+        logoUrl: "logo_url",
+        mainImageUrl: "main_image_url",
+        lookingFor: "looking_for"
+      });
     const companyIdVarIdx = "$" + (values.length + 1);
 
     const querySql = `UPDATE companies 
@@ -171,15 +213,15 @@ class Company {
 
   static async remove(companyHandle) {
     const result = await db.query(
-          `DELETE
+      `DELETE
            FROM companies
            WHERE company_handle = $1
            RETURNING company_name`,
-        [companyHandle]);
+      [companyHandle]);
     const company = result.rows[0];
 
     if (!company) throw new NotFoundError(`No company: ${companyHandle}`);
-  }  
+  }
 }
 
 
