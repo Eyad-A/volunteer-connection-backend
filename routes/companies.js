@@ -10,7 +10,6 @@ const { ensureLoggedIn, ensureCorrectUser } = require("../middleware/auth");
 const Company = require("../models/company");
 const { createToken } = require("../helpers/tokens");
 
-const companyNewSchema = require("../schemas/companyNew.json");
 const companyUpdateSchema = require("../schemas/companyUpdate.json");
 
 const router = new express.Router();
@@ -23,21 +22,21 @@ const router = new express.Router();
  * Returns { handle, name, description, numEmployees, logoUrl }
  */
 
-router.post("/", async function (req, res, next) {
-  try {
-    const validator = jsonschema.validate(req.body, companyNewSchema);
-    if (!validator.valid) {
-      const errs = validator.errors.map(e => e.stack);
-      throw new BadRequestError(errs);
-    }
+// router.post("/", async function (req, res, next) {
+//   try {
+//     const validator = jsonschema.validate(req.body, companyNewSchema);
+//     if (!validator.valid) {
+//       const errs = validator.errors.map(e => e.stack);
+//       throw new BadRequestError(errs);
+//     }
 
-    const company = await Company.create(req.body);
-    const token = createToken(company);
-    return res.status(201).json({ company, token });
-  } catch (err) {
-    return next(err);
-  }
-});
+//     const company = await Company.create(req.body);
+//     const token = createToken(company);
+//     return res.status(201).json({ company, token });
+//   } catch (err) {
+//     return next(err);
+//   }
+// });
 
 /** GET /  =>
  *   { companies: [ { company_name, country, num_employees, short_description, long_description, website_url, logoUrl, main_image_url, looking_for }, ...] }

@@ -12,6 +12,7 @@ const { createToken } = require("../helpers/tokens");
 const userAuthSchema = require("../schemas/userAuth.json");
 const companyAuthSchema = require("../schemas/companyAuth.json");
 const userRegisterSchema = require("../schemas/userRegister.json");
+const companyRegisterSchema = require("../schemas/companyRegister.json");
 const { BadRequestError } = require("../expressError");
 
 /** POST /auth/login-user:  { username, password } => { token }
@@ -96,7 +97,7 @@ router.post("/register-user", async function (req, res, next) {
       throw new BadRequestError(errs);
     }
 
-    const newCompany = await Company.register({ ...req.body });
+    const newCompany = await Company.create({ ...req.body });
     const token = createToken(newCompany);
     return res.status(201).json({ token });
   } catch (err) {
