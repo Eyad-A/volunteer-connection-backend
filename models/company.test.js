@@ -38,8 +38,7 @@ describe("create", function () {
     });
     expect(company).toEqual(newCompany);
 
-    const result = await db.query(
-      // company_name, country, num_employees, short_description, long_description, website_url, logoUrl, main_image_url, looking_for  // 
+    const result = await db.query(      
       `SELECT company_handle, 
             company_name, 
             country, 
@@ -47,7 +46,7 @@ describe("create", function () {
             short_description, 
             long_description, 
             website_url, 
-            logoUrl, 
+            logo_url,
             main_image_url, 
             looking_for
            FROM companies
@@ -57,11 +56,11 @@ describe("create", function () {
         company_handle: "mnc",
         company_name: "My new company",
         country: "USA",
-        numEmployees: 500,
+        num_employees: 500,
         short_description: "Great company",
         long_description: "Really great company",
         website_url: "https://google.com",
-        logoUrl: "https://new.img",
+        logo_url: "https://new.img",
         main_image_url: "https://main.img",
         looking_for: "Web Developer",
       },
@@ -83,7 +82,7 @@ describe("findAll", function () {
         shortDescription: "Creators of the iPhone",
         longDescription: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec convallis, ex nec hendrerit lacinia, augue arcu pharetra odio, pharetra semper tortor erat non urna.",
         websiteUrl: "https://apple.com",
-        logoUrl: "http://c1.img",
+        logoUrl: "https://c1.img",
         mainImageUrl: "https://c1-main.img",
         lookingFor: "Web Developer",
       },
@@ -95,20 +94,20 @@ describe("findAll", function () {
         shortDescription: "Creators of Android",
         longDescription: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec convallis, ex nec hendrerit lacinia, augue arcu pharetra odio, pharetra semper tortor erat non urna.",
         websiteUrl: "https://google.com",
-        logoUrl: "http://c2.img",
+        logoUrl: "https://c2.img",
         mainImageUrl: "https://c2-main.img",
         lookingFor: "Graphic Designer",
       },
       {
-        //'Microsoft', 'Japan', 500, 'Creators of Windows', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec convallis, ex nec hendrerit lacinia, augue arcu pharetra odio, pharetra semper tortor erat non urna.', 'https://microsoft.com', 'https://c3.img', 'https://c3-main.img', 'Analyst'
-        companyHandle: "mcsf",
+        
+        companyHandle: "msft",
         companyName: "Microsoft",
         country: "Japan",
         numEmployees: 500,
         shortDescription: "Creators of Windows",
         longDescription: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec convallis, ex nec hendrerit lacinia, augue arcu pharetra odio, pharetra semper tortor erat non urna.",
         websiteUrl: "https://microsoft.com",
-        logoUrl: "http://c3.img",
+        logoUrl: "https://c3.img",
         mainImageUrl: "https://c3-main.img",
         lookingFor: "Analyst",
       },
@@ -129,9 +128,10 @@ describe("get", function () {
       shortDescription: "Creators of the iPhone",
       longDescription: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec convallis, ex nec hendrerit lacinia, augue arcu pharetra odio, pharetra semper tortor erat non urna.",
       websiteUrl: "https://apple.com",
-      logoUrl: "http://c1.img",
+      logoUrl: "https://c1.img",
       mainImageUrl: "https://c1-main.img",
-      lookingfor: "Web Developer",
+      lookingFor: "Web Developer",
+      users: ["u1"],
     });
   });
 
@@ -156,33 +156,32 @@ describe("update", function () {
     shortDescription: "Creators of the iPhone",
     longDescription: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec convallis, ex nec hendrerit lacinia, augue arcu pharetra odio, pharetra semper tortor erat non urna.",
     websiteUrl: "https://apple.com",
-    logoUrl: "http://c1.img",
+    logoUrl: "https://c1.img",
     mainImageUrl: "https://c1-main.img",
     lookingFor: "Web Developer",
   };
 
   test("Able to update company info", async function () {
-    let company = await Company.update("appl", updateData);
+    let company = await Company.update("gogl", updateData);
     expect(company).toEqual({
-      companyHandle: "aple",
       ...updateData,
     });
 
     const result = await db.query(
       `SELECT company_handle, company_name, country, num_employees, short_description, long_description, website_url, logo_url, main_image_url, looking_for
            FROM companies
-           WHERE company_handle = 'appl'`);
+           WHERE company_handle = 'nwn'`);
     expect(result.rows).toEqual([{
-      companyHandle: "appl",
-      companyName: "New name",
+      company_handle: "nwn",
+      company_name: "New name",
       country: "Italy",
-      numEmployees: 500,
-      shortDescription: "Creators of the iPhone",
-      longDescription: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec convallis, ex nec hendrerit lacinia, augue arcu pharetra odio, pharetra semper tortor erat non urna.",
-      websiteUrl: "https://apple.com",
-      logoUrl: "http://c1.img",
-      mainImageUrl: "https://c1-main.img",
-      lookingFor: "Web Developer",
+      num_employees: 500,
+      short_description: "Creators of the iPhone",
+      long_description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec convallis, ex nec hendrerit lacinia, augue arcu pharetra odio, pharetra semper tortor erat non urna.",
+      website_url: "https://apple.com",
+      logo_url: "https://c1.img",
+      main_image_url: "https://c1-main.img",
+      looking_for: "Web Developer",
     }]);
   });  
 
