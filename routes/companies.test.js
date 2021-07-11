@@ -22,27 +22,28 @@ afterAll(commonAfterAll);
 
 describe("POST /companies", function () {
   const newCompany = {
-    company_name: "New",
+    companyHandle: "mnc",
+    password: "password1",
+    companyName: "New",
     country: "Canada",
     numEmployees: 500,
-    short_description: "Short desc",
-    long_description: "Long desc",
-    website_url: "https://facebook.com",
+    shortDescription: "Short desc",
+    longDescription: "Long desc",
+    websiteUrl: "https://facebook.com",
     logoUrl: "https://new.img",
-    main_image_url: "https://mainnew.img",
-    looking_for: "Manager",
+    mainImageUrl: "https://mainnew.img",
+    lookingFor: "Manager",
   };
 
-  // test("ok for users", async function () {
-  //   const resp = await request(app)
-  //     .post("/companies")
-  //     .send(newCompany)
-  //     .set("authorization", `Bearer ${u1Token}`);
-  //   expect(resp.statusCode).toEqual(201);
-  //   expect(resp.body).toEqual({
-  //     company: newCompany,
-  //   });
-  // });
+  test("Can view a all companies", async function () {
+    const resp = await request(app)
+      .post("/companies")
+      .send(newCompany);
+    expect(resp.statusCode).toEqual(201);
+    expect(resp.body).toEqual({
+      company: newCompany,
+    });
+  });
 
   test("bad request with missing data", async function () {
     const resp = await request(app)

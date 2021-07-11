@@ -103,3 +103,48 @@ describe("POST /auth/register-user", function () {
     expect(resp.statusCode).toEqual(400);
   });
 });
+
+/************************************** POST /auth/login-company */
+
+describe("POST /auth/login-company", function () {
+  test("can post a new token successfully", async function () {
+    const resp = await request(app)
+        .post("/auth/login-company")
+        .send({
+          companyHandle: "c1",
+          password: "password1",       
+        });
+    expect(resp.body).toEqual({
+      "token": expect.any(String),
+    });
+  });
+
+  test("unauth with non-existent companies", async function () {
+    const resp = await request(app)
+        .post("/auth/login-company")
+        .send({
+          companyHandle: "no-such-company",
+          password: "password2",
+        });
+    expect(resp.statusCode).toEqual(401);
+  });
+
+  test("unauth with wrong password", async function () {
+    const resp = await request(app)
+        .post("/auth/login-company")
+        .send({
+          username: "c1",
+          password: "wrongpassword",
+        });
+    expect(resp.statusCode).toEqual(400);
+  });
+
+  test("bad request with missing data", async function () {
+    const resp = await request(app)
+        .post("/auth/login-company")
+        .send({
+          username: "c1",
+        });
+    expect(resp.statusCode).toEqual(400);
+  });  
+});
