@@ -11,6 +11,7 @@ const {
   commonAfterEach,
   commonAfterAll,
   u1Token,
+  c1Token,
 } = require("./_testCommon");
 
 beforeAll(commonBeforeAll);
@@ -18,55 +19,6 @@ beforeEach(commonBeforeEach);
 afterEach(commonAfterEach);
 afterAll(commonAfterAll);
 
-/************************************** POST /companies */
-
-describe("POST /companies", function () {
-  const newCompany = {
-    companyHandle: "mnc",
-    password: "password1",
-    companyName: "New",
-    country: "Canada",
-    numEmployees: 500,
-    shortDescription: "Short desc",
-    longDescription: "Long desc",
-    websiteUrl: "https://facebook.com",
-    logoUrl: "https://new.img",
-    mainImageUrl: "https://mainnew.img",
-    lookingFor: "Manager",
-  };
-
-  test("Can view a all companies", async function () {
-    const resp = await request(app)
-      .post("/companies")
-      .send(newCompany);
-    expect(resp.statusCode).toEqual(201);
-    expect(resp.body).toEqual({
-      company: newCompany,
-    });
-  });
-
-  test("bad request with missing data", async function () {
-    const resp = await request(app)
-      .post("/companies")
-      .send({
-        company_name: "new",
-        numEmployees: 500,
-      })
-      .set("authorization", `Bearer ${u1Token}`);
-    expect(resp.statusCode).toEqual(400);
-  });
-
-  test("bad request with invalid data", async function () {
-    const resp = await request(app)
-      .post("/companies")
-      .send({
-        ...newCompany,
-        logoUrl: "not-a-url",
-      })
-      .set("authorization", `Bearer ${u1Token}`);
-    expect(resp.statusCode).toEqual(400);
-  });
-});
 
 /************************************** GET /companies */
 
@@ -77,37 +29,40 @@ describe("GET /companies", function () {
       companies:
         [
           {
-            company_name: "C1",
+            companyHandle: "c1",
+            companyName: "C1",
             country: "USA",
             numEmployees: 200,
-            short_description: "Short desc 1",
-            long_description: "Long desc 1",
-            website_url: "https://google.com",
+            shortDescription: "Short desc 1",
+            longDescription: "Long desc 1",
+            websiteUrl: "https://google.com",
             logoUrl: "https://c1.img",
-            main_image_url: "https://main1.img",
-            looking_for: "Graphic Designer",
+            mainImageUrl: "https://main1.img",
+            lookingFor: "Graphic Designer",
           },
           {
-            company_name: "C2",
+            companyHandle: "c2",
+            companyName: "C2",
             country: "Japan",
             numEmployees: 300,
-            short_description: "Short desc 2",
-            long_description: "Long desc 2",
-            website_url: "https://cnn.com",
+            shortDescription: "Short desc 2",
+            longDescription: "Long desc 2",
+            websiteUrl: "https://cnn.com",
             logoUrl: "https://c2.img",
-            main_image_url: "https://main2.img",
-            looking_for: "Writer",
+            mainImageUrl: "https://main2.img",
+            lookingFor: "Writer",
           },
           {
-            company_name: "C3",
+            companyHandle: "c3",
+            companyName: "C3",
             country: "Canada",
             numEmployees: 700,
-            short_description: "Short desc 3",
-            long_description: "Long desc 3",
-            website_url: "https://facebook.com",
+            shortDescription: "Short desc 3",
+            longDescription: "Long desc 3",
+            websiteUrl: "https://facebook.com",
             logoUrl: "https://c3.img",
-            main_image_url: "https://main3.img",
-            looking_for: "Manager",
+            mainImageUrl: "https://main3.img",
+            lookingFor: "Manager",
           },
         ],
     });
@@ -118,18 +73,20 @@ describe("GET /companies", function () {
 
 describe("GET /companies/:company_handle", function () {
   test("can get a company successfully", async function () {
-    const resp = await request(app).get(`/companies/1`);
+    const resp = await request(app).get(`/companies/c1`);
     expect(resp.body).toEqual({
       company: {
-        company_name: "C1",
+        companyHandle: "c1",
+        companyName: "C1",
         country: "USA",
         numEmployees: 200,
-        short_description: "Short desc 1",
-        long_description: "Long desc 1",
-        website_url: "https://google.com",
+        shortDescription: "Short desc 1",
+        longDescription: "Long desc 1",
+        websiteUrl: "https://google.com",
         logoUrl: "https://c1.img",
-        main_image_url: "https://main1.img",
-        looking_for: "Graphic Designer",
+        mainImageUrl: "https://main1.img",
+        lookingFor: "Graphic Designer",
+        users: ["u1"],
       },
     });
   });
@@ -145,22 +102,23 @@ describe("GET /companies/:company_handle", function () {
 describe("PATCH /companies/:company_handle", function () {
   test("can patch a company successfully", async function () {
     const resp = await request(app)
-      .patch(`/companies/1`)
+      .patch(`/companies/c1`)
       .send({
-        company_name: "C1-new",
+        companyName: "C1-new",
       })
-      .set("authorization", `Bearer ${u1Token}`);
+      .set("authorization", `Bearer ${c1Token}`);
     expect(resp.body).toEqual({
       company: {        
-        name: "C1-new",
+        companyHandle: "c1",
+        companyName: "C1-new",
         country: "USA",
         numEmployees: 200,
-        short_description: "Short desc 1",
-        long_description: "Long desc 1",
-        website_url: "https://google.com",
+        shortDescription: "Short desc 1",
+        longDescription: "Long desc 1",
+        websiteUrl: "https://google.com",
         logoUrl: "https://c1.img",
-        main_image_url: "https://main1.img",
-        looking_for: "Graphic Designer",
+        mainImageUrl: "https://main1.img",
+        lookingFor: "Graphic Designer",
       },
     });
   });  
@@ -171,17 +129,17 @@ describe("PATCH /companies/:company_handle", function () {
       .send({
         name: "new nope",
       })
-      .set("authorization", `Bearer ${u1Token}`);
-    expect(resp.statusCode).toEqual(404);
+      .set("authorization", `Bearer ${c1Token}`);
+    expect(resp.statusCode).toEqual(400);
   }); 
 
   test("bad request on invalid data", async function () {
     const resp = await request(app)
-      .patch(`/companies/1`)
+      .patch(`/companies/c1`)
       .send({
         logoUrl: "not-a-url",
       })
-      .set("authorization", `Bearer ${u1Token}`);
+      .set("authorization", `Bearer ${c1Token}`);
     expect(resp.statusCode).toEqual(400);
   });
 });
