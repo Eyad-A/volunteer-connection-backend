@@ -11,42 +11,47 @@ async function commonBeforeAll() {
   // noinspection SqlWithoutWhere
   await db.query("DELETE FROM companies");
 
-  await Company.create(
-    //company_name, country, num_employees, short_description, long_description, website_url, logo_url, main_image_url, looking_for
+  await Company.create(    
       {        
-        company_name: "C1",
+        companyHandle: "c1",
+        password: "password1",
+        companyName: "C1",
         country: "USA",
         numEmployees: 200,
-        short_description: "Short desc 1",
-        long_description: "Long desc 1",
-        website_url: "https://google.com",
+        shortDescription: "Short desc 1",
+        longDescription: "Long desc 1",
+        websiteUrl: "https://google.com",
         logoUrl: "https://c1.img",
-        main_image_url: "https://main1.img",
-        looking_for: "Graphic Designer",
+        mainImageUrl: "https://main1.img",
+        lookingFor: "Graphic Designer",
       });
   await Company.create(
       {
-        company_name: "C2",
+        companyHandle: "c2",
+        password: "password2",
+        companyName: "C2",
         country: "Japan",
         numEmployees: 300,
-        short_description: "Short desc 2",
-        long_description: "Long desc 2",
-        website_url: "https://cnn.com",
+        shortDescription: "Short desc 2",
+        longDescription: "Long desc 2",
+        websiteUrl: "https://cnn.com",
         logoUrl: "https://c2.img",
-        main_image_url: "https://main2.img",
-        looking_for: "Writer",
+        mainImageUrl: "https://main2.img",
+        lookingFor: "Writer",
       });
   await Company.create(
       {
-        company_name: "C3",
+        companyHandle: "c3",
+        password: "password3",
+        companyName: "C3",
         country: "Canada",
         numEmployees: 700,
-        short_description: "Short desc 3",
-        long_description: "Long desc 3",
-        website_url: "https://facebook.com",
+        shortDescription: "Short desc 3",
+        longDescription: "Long desc 3",
+        websiteUrl: "https://facebook.com",
         logoUrl: "https://c3.img",
-        main_image_url: "https://main3.img",
-        looking_for: "Manager",
+        mainImageUrl: "https://main3.img",
+        lookingFor: "Manager",
       });
 
   await User.register({
@@ -74,7 +79,7 @@ async function commonBeforeAll() {
     skill: "Chef",
   });
 
-  await User.applyToCompany("u1", 1);
+  await User.connectToCompany("u1", "c1");
 }
 
 async function commonBeforeEach() {

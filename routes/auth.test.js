@@ -16,7 +16,7 @@ beforeEach(commonBeforeEach);
 afterEach(commonAfterEach);
 afterAll(commonAfterAll);
 
-/************************************** POST /auth/token */
+/************************************** POST /auth/login-user */
 
 describe("POST /auth/login-user", function () {
   test("can post a new token successfully", async function () {
@@ -24,7 +24,7 @@ describe("POST /auth/login-user", function () {
         .post("/auth/login-user")
         .send({
           username: "u1",
-          password: "password1",
+          password: "password1",          
         });
     expect(resp.body).toEqual({
       "token": expect.any(String),
@@ -36,7 +36,7 @@ describe("POST /auth/login-user", function () {
         .post("/auth/login-user")
         .send({
           username: "no-such-user",
-          password: "password1",
+          password: "password2",
         });
     expect(resp.statusCode).toEqual(401);
   });
@@ -45,7 +45,7 @@ describe("POST /auth/login-user", function () {
     const resp = await request(app)
         .post("/auth/login-user")
         .send({
-          username: "u1",
+          username: "u2",
           password: "nope",
         });
     expect(resp.statusCode).toEqual(401);
@@ -55,13 +55,13 @@ describe("POST /auth/login-user", function () {
     const resp = await request(app)
         .post("/auth/login-user")
         .send({
-          username: "u1",
+          username: "u2",
         });
     expect(resp.statusCode).toEqual(400);
   });  
 });
 
-/************************************** POST /auth/register */
+/************************************** POST /auth/register-user */
 
 describe("POST /auth/register-user", function () {
   test("can register successfully", async function () {
