@@ -39,7 +39,7 @@ const router = new express.Router();
 // });
 
 /** GET /  =>
- *   { companies: [ { company_name, country, num_employees, short_description, long_description, website_url, logoUrl, main_image_url, looking_for }, ...] }
+ *   { companies: [ { company_name, state, num_employees, short_description, long_description, website_url, logoUrl, main_image_url, looking_for }, ...] }
  *
  * Authorization required: none
  */
@@ -55,7 +55,7 @@ router.get("/", async function (req, res, next) {
 
 /** GET /[company_handle]  =>  { company }
  *
- *  Company is { company_name, country, num_employees, short_description, long_description, website_url, logoUrl, main_image_url, looking_for } 
+ *  Company is { company_name, state, num_employees, short_description, long_description, website_url, logoUrl, main_image_url, looking_for } 
  *
  * Authorization required: none
  */
@@ -73,7 +73,7 @@ router.get("/:company_handle", async function (req, res, next) {
  *
  * Patches company data.
  *
- * fields can be: { company_name, country, num_employees, short_description, long_description, website_url, logoUrl, main_image_url, looking_for }  
+ * fields can be: { company_name, state, num_employees, short_description, long_description, website_url, logoUrl, main_image_url, looking_for }  
  *
  * Authorization required: login
  */

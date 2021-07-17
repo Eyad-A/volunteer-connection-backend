@@ -18,7 +18,7 @@
         "minLength": 1,
         "maxLength": 50
       },    
-      "country": {
+      "state": {
         "type": "string"
       },
       "numEmployees": {
@@ -52,7 +52,7 @@
       "companyHandle",
       "password",
       "companyName",
-      "country",
+      "state",
       "shortDescription",
       "longDescription",
       "websiteUrl",

@@ -31,7 +31,7 @@ describe("GET /companies", function () {
           {
             companyHandle: "c1",
             companyName: "C1",
-            country: "USA",
+            state: "USA",
             numEmployees: 200,
             shortDescription: "Short desc 1",
             longDescription: "Long desc 1",
@@ -43,7 +43,7 @@ describe("GET /companies", function () {
           {
             companyHandle: "c2",
             companyName: "C2",
-            country: "Japan",
+            state: "Japan",
             numEmployees: 300,
             shortDescription: "Short desc 2",
             longDescription: "Long desc 2",
@@ -55,7 +55,7 @@ describe("GET /companies", function () {
           {
             companyHandle: "c3",
             companyName: "C3",
-            country: "Canada",
+            state: "Canada",
             numEmployees: 700,
             shortDescription: "Short desc 3",
             longDescription: "Long desc 3",
@@ -78,7 +78,7 @@ describe("GET /companies/:company_handle", function () {
       company: {
         companyHandle: "c1",
         companyName: "C1",
-        country: "USA",
+        state: "USA",
         numEmployees: 200,
         shortDescription: "Short desc 1",
         longDescription: "Long desc 1",
@@ -111,7 +111,7 @@ describe("PATCH /companies/:company_handle", function () {
       company: {        
         companyHandle: "c1",
         companyName: "C1-new",
-        country: "USA",
+        state: "USA",
         numEmployees: 200,
         shortDescription: "Short desc 1",
         longDescription: "Long desc 1",

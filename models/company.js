@@ -23,7 +23,7 @@ class Company {
       `SELECT company_handle AS "companyHandle",
                   password,                  
                   company_name AS "companyName", 
-                  country, 
+                  state, 
                   num_employees AS "numEmployees", 
                   short_description AS "shortDescription", 
                   long_description AS "longDescription", 
@@ -53,14 +53,14 @@ class Company {
 
   /** Create a company (from data), update db, return new company data.
    *
-   * data should be { companyName, country, numEmployees, shortDescription, longDescription, websiteUrl, logoUrl, mainImageUrl, lookingFor }
+   * data should be { companyName, state, numEmployees, shortDescription, longDescription, websiteUrl, logoUrl, mainImageUrl, lookingFor }
    *
-   * Returns { company_name, country, num_employees, short_description, long_description, website_url, logoUrl, main_image_url, looking_for }
+   * Returns { company_name, state, num_employees, short_description, long_description, website_url, logoUrl, main_image_url, looking_for }
    *
    * Throws BadRequestError if company already in database.
    * */
 
-  static async create({ companyHandle, password, companyName, country, numEmployees, shortDescription, longDescription, websiteUrl, logoUrl, mainImageUrl, lookingFor }) {
+  static async create({ companyHandle, password, companyName, state, numEmployees, shortDescription, longDescription, websiteUrl, logoUrl, mainImageUrl, lookingFor }) {
     const duplicateCheck = await db.query(
       `SELECT company_handle
            FROM companies
@@ -74,14 +74,14 @@ class Company {
 
     const result = await db.query(
       `INSERT INTO companies
-           (company_handle, password, company_name, country, num_employees, short_description, long_description, website_url, logo_url, main_image_url, looking_for)
+           (company_handle, password, company_name, state, num_employees, short_description, long_description, website_url, logo_url, main_image_url, looking_for)
            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
-           RETURNING company_handle AS "companyHandle", company_name AS "companyName", country, num_employees AS "numEmployees", short_description AS "shortDescription", long_description AS "longDescription", website_url AS "websiteUrl", logo_url AS "logoUrl", main_image_url AS "mainImageUrl", looking_for AS "lookingFor"`,
+           RETURNING company_handle AS "companyHandle", company_name AS "companyName", state, num_employees AS "numEmployees", short_description AS "shortDescription", long_description AS "longDescription", website_url AS "websiteUrl", logo_url AS "logoUrl", main_image_url AS "mainImageUrl", looking_for AS "lookingFor"`,
       [
         companyHandle,
         hashedPassword,
         companyName,
-        country,
+        state,
         numEmployees,
         shortDescription,
         longDescription,
@@ -104,7 +104,7 @@ class Company {
       `SELECT 
             company_handle AS "companyHandle",
             company_name AS "companyName", 
-            country, 
+            state, 
             num_employees AS "numEmployees", 
             short_description AS "shortDescription", 
             long_description AS "longDescription", 
@@ -129,7 +129,7 @@ class Company {
     const companyRes = await db.query(
       `SELECT company_handle AS "companyHandle", 
             company_name AS "companyName", 
-            country, 
+            state, 
             num_employees AS "numEmployees", 
             short_description AS "shortDescription", 
             long_description "longDescription", 
@@ -164,7 +164,7 @@ class Company {
    * This is a "partial update" --- it's fine if data doesn't contain all the
    * fields; this only changes provided ones.
    *
-   * Data can include: {company_name, country, num_employees, short_description, long_description, website_url, logoUrl, main_image_url, looking_for}
+   * Data can include: {company_name, state, num_employees, short_description, long_description, website_url, logoUrl, main_image_url, looking_for}
    *
    * Throws NotFoundError if not found.
    */
@@ -190,7 +190,7 @@ class Company {
                       WHERE company_handle = ${companyIdVarIdx}
                       RETURNING company_handle AS "companyHandle", 
                                 company_name AS "companyName", 
-                                country,
+                                state,
                                 num_employees AS "numEmployees", 
                                 short_description AS "shortDescription",
                                 long_description AS "longDescription",

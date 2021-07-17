@@ -23,7 +23,7 @@ describe("authenticate", function () {
     expect(company).toEqual({
       companyHandle: "appl",
       companyName: "Apple",
-      country: "USA",
+      state: "USA",
       numEmployees: 600,
       shortDescription: "Creators of the iPhone",
       longDescription: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec convallis, ex nec hendrerit lacinia, augue arcu pharetra odio, pharetra semper tortor erat non urna.",
@@ -60,7 +60,7 @@ describe("create", function () {
   const newCompany = {
     companyHandle: "mnc",
     companyName: "My new company",
-    country: "USA",
+    state: "USA",
     numEmployees: 500,
     shortDescription: "Great company",
     longDescription: "Really great company",
@@ -80,7 +80,7 @@ describe("create", function () {
     const result = await db.query(
       `SELECT company_handle, 
             company_name, 
-            country, 
+            state, 
             num_employees, 
             short_description, 
             long_description, 
@@ -94,7 +94,7 @@ describe("create", function () {
       {
         company_handle: "mnc",
         company_name: "My new company",
-        country: "USA",
+        state: "USA",
         num_employees: 500,
         short_description: "Great company",
         long_description: "Really great company",
@@ -116,7 +116,7 @@ describe("findAll", function () {
       {
         companyHandle: "appl",
         companyName: "Apple",
-        country: "USA",
+        state: "USA",
         numEmployees: 600,
         shortDescription: "Creators of the iPhone",
         longDescription: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec convallis, ex nec hendrerit lacinia, augue arcu pharetra odio, pharetra semper tortor erat non urna.",
@@ -128,7 +128,7 @@ describe("findAll", function () {
       {
         companyHandle: "gogl",
         companyName: "Google",
-        country: "Germany",
+        state: "Germany",
         numEmployees: 800,
         shortDescription: "Creators of Android",
         longDescription: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec convallis, ex nec hendrerit lacinia, augue arcu pharetra odio, pharetra semper tortor erat non urna.",
@@ -141,7 +141,7 @@ describe("findAll", function () {
 
         companyHandle: "msft",
         companyName: "Microsoft",
-        country: "Japan",
+        state: "Japan",
         numEmployees: 500,
         shortDescription: "Creators of Windows",
         longDescription: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec convallis, ex nec hendrerit lacinia, augue arcu pharetra odio, pharetra semper tortor erat non urna.",
@@ -162,7 +162,7 @@ describe("get", function () {
     expect(company).toEqual({
       companyHandle: "appl",
       companyName: "Apple",
-      country: "USA",
+      state: "USA",
       numEmployees: 600,
       shortDescription: "Creators of the iPhone",
       longDescription: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec convallis, ex nec hendrerit lacinia, augue arcu pharetra odio, pharetra semper tortor erat non urna.",
@@ -190,7 +190,7 @@ describe("update", function () {
   const updateData = {
     companyHandle: "nwn",
     companyName: "New name",
-    country: "Italy",
+    state: "Italy",
     numEmployees: 500,
     shortDescription: "Creators of the iPhone",
     longDescription: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec convallis, ex nec hendrerit lacinia, augue arcu pharetra odio, pharetra semper tortor erat non urna.",
@@ -207,13 +207,13 @@ describe("update", function () {
     });
 
     const result = await db.query(
-      `SELECT company_handle, company_name, country, num_employees, short_description, long_description, website_url, logo_url, main_image_url, looking_for
+      `SELECT company_handle, company_name, state, num_employees, short_description, long_description, website_url, logo_url, main_image_url, looking_for
            FROM companies
            WHERE company_handle = 'nwn'`);
     expect(result.rows).toEqual([{
       company_handle: "nwn",
       company_name: "New name",
-      country: "Italy",
+      state: "Italy",
       num_employees: 500,
       short_description: "Creators of the iPhone",
       long_description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec convallis, ex nec hendrerit lacinia, augue arcu pharetra odio, pharetra semper tortor erat non urna.",
