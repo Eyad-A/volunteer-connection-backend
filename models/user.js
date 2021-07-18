@@ -69,7 +69,7 @@ class User {
       throw new BadRequestError(`Duplicate username: ${username}`);
     }
 
-    const hashedPassword = await bcrypt.hash(password, BCRYPT_WORK_FACTOR);
+    const hashedPassword = await bcrypt.hash(password, BCRYPT_WORK_FACTOR);    
 
     const result = await db.query(
       `INSERT INTO users
@@ -78,16 +78,17 @@ class User {
             first_name,
             last_name,
             email,
-            skill)
+            skill
+            )
            VALUES ($1, $2, $3, $4, $5, $6)
-           RETURNING username, first_name AS "firstName", last_name AS "lastName", email, skill`,
+           RETURNING username, first_name AS "firstName", last_name AS "lastName", email, skill, role`,
       [
         username,
         hashedPassword,
         firstName,
         lastName,
         email,
-        skill,
+        skill,        
       ],
     );
 
@@ -107,7 +108,8 @@ class User {
                   first_name AS "firstName",
                   last_name AS "lastName",
                   email,
-                  skill
+                  skill,
+                  role
            FROM users
            ORDER BY username`,
     );
@@ -128,7 +130,8 @@ class User {
                   first_name AS "firstName",
                   last_name AS "lastName",
                   email,
-                  skill
+                  skill,
+                  role
            FROM users
            WHERE username = $1`,
       [username],
@@ -182,7 +185,8 @@ class User {
                                 first_name AS "firstName",
                                 last_name AS "lastName",
                                 email,
-                                skill`;
+                                skill,
+                                role`;
     const result = await db.query(querySql, [...values, username]);
     const user = result.rows[0];
 

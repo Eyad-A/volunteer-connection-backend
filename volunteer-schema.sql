@@ -10,7 +10,7 @@ CREATE TABLE companies (
   logo_url TEXT,
   main_image_url TEXT,
   looking_for TEXT NOT NULL,
-  role TEXT NOT NULL
+  role TEXT DEFAULT 'company'
 );
 
 CREATE TABLE users (
@@ -20,7 +20,7 @@ CREATE TABLE users (
   last_name TEXT NOT NULL,
   email TEXT NOT NULL CHECK (position('@' IN email) > 1),
   skill TEXT NOT NULL,
-  role TEXT NOT NULL
+  role TEXT DEFAULT 'user'
 );
 
 CREATE TABLE connections (
