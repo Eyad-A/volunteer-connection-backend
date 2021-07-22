@@ -3,10 +3,10 @@
   "$id": "http://our.company.com/companyUpdate.schema.json",
   "type": "object",
   "properties": {
-    "companyHandle": {
+    "password": {
       "type": "string",
       "minLength": 1,
-      "maxLength": 8
+      "maxLength": 20
     },    
     "companyName": {
       "type": "string",
