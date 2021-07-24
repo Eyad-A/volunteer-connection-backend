@@ -31,12 +31,28 @@
       "format": "uri"
     },
     "logoUrl": {
-      "type": "string",
-      "format": "uri"
+      "anyOf": [
+        {
+          "type": "string",
+          "format": "uri"
+        },
+        {
+          "type": "string",
+          "maxLength": 0
+        }
+      ]
     },
     "mainImageUrl": {
-      "type": "string",
-      "format": "uri"
+      "anyOf": [
+        {
+          "type": "string",
+          "format": "uri"
+        },
+        {
+          "type": "string",
+          "maxLength": 0
+        }
+      ]
     },
     "lookingFor": {
       "type": "string"
