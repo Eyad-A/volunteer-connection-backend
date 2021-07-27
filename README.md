@@ -2,8 +2,8 @@
 This is the backend for the Volunteer Connection project. Volunteer Connection is a platform that allows freelancers to connect with nonprofit companies. 
 The backend is built with Node, Express, and Postgresql. 
 
-[You can find the frontend here](https://github.com/Eyad-A/volunteer-connection-frontend) 
-[The project is deployed here](http://volunteer-connection.surge.sh/)
+[You can find the frontend here](https://github.com/Eyad-A/volunteer-connection-frontend)  
+[The project is deployed here](http://volunteer-connection.surge.sh/)  
 
 ## Testing
 You can run the tests locally by using the comand `npm run test`. This project uses Jest for testing.
