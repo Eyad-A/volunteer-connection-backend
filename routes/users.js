@@ -16,16 +16,18 @@ const router = express.Router();
 /** GET / => { users: [ {username, firstName, lastName, email }, ... ] }
  *
  * Returns list of all users.
+ * 
+ * Disabled for now.
  **/
 
-router.get("/", async function (req, res, next) {
-  try {
-    const users = await User.findAll();
-    return res.json({ users });
-  } catch (err) {
-    return next(err);
-  }
-});
+// router.get("/", async function (req, res, next) {
+//   try {
+//     const users = await User.findAll();
+//     return res.json({ users });
+//   } catch (err) {
+//     return next(err);
+//   }
+// });
 
 
 /** GET /[username] => { user }
@@ -35,7 +37,7 @@ router.get("/", async function (req, res, next) {
  * Authorization required: login
  **/
 
-router.get("/:username", async function (req, res, next) {
+router.get("/:username", ensureCorrectUser, async function (req, res, next) {
   try {
     const user = await User.get(req.params.username);
     return res.json({ user });
