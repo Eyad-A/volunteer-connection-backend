@@ -60,6 +60,7 @@ describe("register", function () {
     firstName: "Test",
     lastName: "Tester",
     email: "test@test.com",
+    role: "user",
     skill: "Accountant",
   };
 
@@ -102,6 +103,7 @@ describe("get", function () {
       firstName: "U1F",
       lastName: "U1L",
       email: "u1@email.com",
+      role: "user",
       skill: "Web Developer",
       connections: ["appl"],
     });
@@ -124,6 +126,7 @@ describe("update", function () {
     firstName: "NewF",
     lastName: "NewF",
     email: "new@email.com",
+    role: "user",
     skill: "Animator",
   };
 

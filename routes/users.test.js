@@ -19,62 +19,13 @@ beforeEach(commonBeforeEach);
 afterEach(commonAfterEach);
 afterAll(commonAfterAll);
 
-/************************************** GET /users */
-
-describe("GET /users", function () {
-  test("Should be able to get a list of users", async function () {
-    const resp = await request(app)
-        .get("/users");
-    expect(resp.body).toEqual({
-      users: [
-        {
-          username: "u1",
-          firstName: "U1F",
-          lastName: "U1L",
-          email: "user1@user.com",
-          skill: "UX Designer",
-        },
-        {
-          username: "u2",
-          firstName: "U2F",
-          lastName: "U2L",
-          email: "user2@user.com",
-          skill: "Analyst",
-        },
-        {
-          username: "u3",
-          firstName: "U3F",
-          lastName: "U3L",
-          email: "user3@user.com",
-          skill: "Chef",
-        },
-      ],
-    });
-  });
-});
-
 /************************************** GET /users/:username */
 
 describe("GET /users/:username", function () {
-  test("should be able to view a single user", async function () {
+  test("should not be able to view a user without auth", async function () {
     const resp = await request(app)
         .get(`/users/u1`);
-    expect(resp.body).toEqual({
-      user: {
-        username: "u1",
-        firstName: "U1F",
-        lastName: "U1L",
-        email: "user1@user.com",
-        skill: "UX Designer",
-        connections: ["c1"],
-      },
-    });
-  });  
-
-  test("not found if user not found", async function () {
-    const resp = await request(app)
-        .get(`/users/nope`);
-    expect(resp.statusCode).toEqual(404);
+    expect(resp.statusCode).toEqual(401);
   });
 });
 
@@ -94,6 +45,7 @@ describe("PATCH /users/:username", () => {
         firstName: "New",
         lastName: "U1L",
         email: "user1@user.com",
+        role: "user",
         skill: "UX Designer",
       },
     });
